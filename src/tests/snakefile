@@ -1,0 +1,141 @@
+
+##testar com influenza, o fasta do coronavirus parece ter um problema que impede a criação de base de dados
+
+######CHECK AND MAKE DB #########
+
+db=str(input('Witch virus do you wish to study (write the whole name)? '))
+
+def db_check (db):
+    for i in shell("abricate --list", iterable=True):
+        if db in i:
+            check = 1
+            break
+        else:
+            check = 0
+    return (check)
+
+check = db_check(db)
+if check == 1:
+    print('Database available! Starting analysis...')
+else:
+    print('Database not available!')
+    fasta = str(input('To create the database, enter the path to the fasta file: '))
+    abricate_db = str(input('Now enter the path to abricate database: '))
+    print ('Creating database...')
+    shell("mkdir {abricate_db}/{db}")
+    shell("cp {fasta} {abricate_db}/{db}/sequences")
+    shell("abricate --setupdb")
+    check = db_check(db)
+    if check == 1:
+        print('Database available! Starting analysis...')
+    else:
+        print('Not possible to create a database with the given fasta file :(')
+
+
+
+####SAMPLES INPUT####################
+##não queremos usar esta parte, seria pouco prático o utilizador ter que fornecer o nome de todas as amostras
+
+SAMPLE=[]
+
+while True:
+    sample_name = str(input('Enter the name of the sample (to finish click ENTER): '))
+    if sample_dir != '':
+        SAMPLE.append (sample_name)
+    else:
+        break
+
+
+print("Samples to be analyzed: ", sample)
+
+############## ANALYSIS ABRICATE ##############################
+
+sample_path=str(input('Enter the path to the folder that contains samples to be analyzed: '))
+
+#OPÇÃO 1
+# #####se pedirmos o nome de cada amostra ao utilizador e guardarmos na lista SAMPLES:
+rule all:
+    input:
+        expand("results/{sample}.tab",sample = SAMPLES)
+
+rule abricate:
+    input:
+        expand("{path}{{sample}}.fasta", path=sample_path)
+    output:
+        "results/{sample}.tab"
+    shell:
+        "abricate --db {db} {input} > {output}"
+
+####ficava resolvido mas não seria a solução ideal
+#OPÇÃO 2
+####outra solução passa por criar um ficheiro final sem wildcards:
+
+rule all:    ###nesta regra tem que estar especificado o output final desejado, sem usar wildcards
+    input:
+        "results/all_reults.txt"
+
+rule abricate:
+    input:
+        expand("{path}{{sample}}.fasta", path=sample_path)
+    output:
+        "results/{sample}.tab"
+    shell:
+        "abricate --db {db} {input} > {output}"
+
+###tentativa de juntar todos os resultados num só ficheiro (que seria usado na rule all) apenas com nome da amostra, gene e nome do virus
+rule gather:  ###não funciona
+    input:
+        "results/{sample}.tab"
+    output:
+        "results/all_results.txt"
+    run:
+        i = open ({input},"r")
+        o = open ({output},"a")
+        for line in i:
+            line = line.strip()
+            line = line.split("\t")
+            name = line[0]
+            name = name.strip()
+            name = name.split("/")
+            o.write("{:40s} {:40s} {:40s}".format(name[-1], line[4], line[10]))
+
+
+
+
+#####TABLE ORGANIZATION####
+rule table: ##ainda não foi testado
+    input:
+        "results/{sample}.tab"
+    run:
+        file= open (input,"r")
+        for line in file:
+            line = line.strip()
+            line = line.split("\t")
+            name = line[0]
+            name = name.strip()
+            name = name.split("/")
+            print("{:40s} {:40s} {:40s}".format(name[-1], line[4], line[10]))
+
+
+##código funciona (output na foto)
+file = open("06.tab", "r")
+for line in file:
+    line = line.strip()
+    line = line.split("\t")
+    name=line[0]
+    name=name.strip()
+    name=name.split("/")
+    print("{:40s} {:40s} {:40s}".format(name[-1],line[4], line[10]))
+
+
+    run:
+        shell("cp {input} {output.a}")
+        with open (output.a,"w") as file:
+            for line in file:
+                line = line.strip()
+                line = line.split("\t")
+                name=line[0]
+                name=name.strip()
+                name=name.split("/")
+                file.write("{:40s} {:40s} {:40s}".format(name[-1],line[4], line[10]))
+        shell("cp {output.a} {output.b}")
