@@ -5,6 +5,4 @@ Created on 12/09/2022
 '''
 
 if __name__ == '__main__':
-    
-    
     print("finished")
