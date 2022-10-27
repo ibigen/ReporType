@@ -32,31 +32,27 @@ else:
         print('Not possible to create a database with the given fasta file :(')
 
 
-
-####SAMPLES INPUT####################
-##não queremos usar esta parte, seria pouco prático o utilizador ter que fornecer o nome de todas as amostras
-
-SAMPLE=[]
-
-while True:
-    sample_name = str(input('Enter the name of the sample (to finish click ENTER): '))
-    if sample_dir != '':
-        SAMPLE.append (sample_name)
-    else:
-        break
-
-
-print("Samples to be analyzed: ", sample)
-
 ############## ANALYSIS ABRICATE ##############################
 
 sample_path=str(input('Enter the path to the folder that contains samples to be analyzed: '))
 
-#OPÇÃO 1
-# #####se pedirmos o nome de cada amostra ao utilizador e guardarmos na lista SAMPLES:
+
+def files_path(*args):
+    l = []
+    for item in args:
+        for p, _, files in os.walk(os.path.abspath(item)):
+            for file in files:
+                if file.endswith(".fasta"):
+                    file=file.replace(".fasta","")
+                    l.append(file)
+    return l
+
+SAMPLES=files_path(sample_path)
+
+
 rule all:
     input:
-        expand("results/{sample}.tab",sample = SAMPLES)
+        expand("results/{sample}.txt",sample = SAMPLES)
 
 rule abricate:
     input:
@@ -66,31 +62,14 @@ rule abricate:
     shell:
         "abricate --db {db} {input} > {output}"
 
-####ficava resolvido mas não seria a solução ideal
-#OPÇÃO 2
-####outra solução passa por criar um ficheiro final sem wildcards:
-
-rule all:    ###nesta regra tem que estar especificado o output final desejado, sem usar wildcards
-    input:
-        "results/all_reults.txt"
-
-rule abricate:
-    input:
-        expand("{path}{{sample}}.fasta", path=sample_path)
-    output:
-        "results/{sample}.tab"
-    shell:
-        "abricate --db {db} {input} > {output}"
-
-###tentativa de juntar todos os resultados num só ficheiro (que seria usado na rule all) apenas com nome da amostra, gene e nome do virus
-rule gather:  ###não funciona
+rule configurate:
     input:
         "results/{sample}.tab"
     output:
-        "results/all_results.txt"
+        "results/{sample}.txt"
     run:
-        i = open ({input},"r")
-        o = open ({output},"a")
+        i = open (input,"r")
+        o = open (output,"a")
         for line in i:
             line = line.strip()
             line = line.split("\t")
@@ -98,44 +77,3 @@ rule gather:  ###não funciona
             name = name.strip()
             name = name.split("/")
             o.write("{:40s} {:40s} {:40s}".format(name[-1], line[4], line[10]))
-
-
-
-
-#####TABLE ORGANIZATION####
-rule table: ##ainda não foi testado
-    input:
-        "results/{sample}.tab"
-    run:
-        file= open (input,"r")
-        for line in file:
-            line = line.strip()
-            line = line.split("\t")
-            name = line[0]
-            name = name.strip()
-            name = name.split("/")
-            print("{:40s} {:40s} {:40s}".format(name[-1], line[4], line[10]))
-
-
-##código funciona (output na foto)
-file = open("06.tab", "r")
-for line in file:
-    line = line.strip()
-    line = line.split("\t")
-    name=line[0]
-    name=name.strip()
-    name=name.split("/")
-    print("{:40s} {:40s} {:40s}".format(name[-1],line[4], line[10]))
-
-
-    run:
-        shell("cp {input} {output.a}")
-        with open (output.a,"w") as file:
-            for line in file:
-                line = line.strip()
-                line = line.split("\t")
-                name=line[0]
-                name=name.strip()
-                name=name.split("/")
-                file.write("{:40s} {:40s} {:40s}".format(name[-1],line[4], line[10]))
-        shell("cp {output.a} {output.b}")
