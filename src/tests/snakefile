@@ -29,7 +29,7 @@ else:
     if check == 1:
         print('Database available! Starting analysis...')
     else:
-        print('Not possible to create a database with the given fasta file :(')
+        print('Not possible to create a database with the given fasta files')
 
 
 ############## ANALYSIS ABRICATE ##############################
