@@ -35,6 +35,8 @@ else:
 ############## ANALYSIS ABRICATE ##############################
 
 sample_path=str(input('Enter the path to the folder that contains samples to be analyzed: '))
+sample_path=sample_path.replace('"',"")
+sample_path=str(sample_path)
 
 
 def files_path(*args):
@@ -52,28 +54,36 @@ SAMPLES=files_path(sample_path)
 
 rule all:
     input:
-        expand("results/{sample}.txt",sample = SAMPLES)
+        expand("results/simplified/{sample}.tab",sample = SAMPLES)
 
 rule abricate:
     input:
         expand("{path}{{sample}}.fasta", path=sample_path)
     output:
-        "results/{sample}.tab"
+        "results/all/{sample}.tab"
     shell:
         "abricate --db {db} {input} > {output}"
 
+
 rule configurate:
     input:
-        "results/{sample}.tab"
+        "results/all/{sample}.tab"
     output:
-        "results/{sample}.txt"
-    run:
-        i = open (input,"r")
-        o = open (output,"a")
-        for line in i:
-            line = line.strip()
-            line = line.split("\t")
-            name = line[0]
-            name = name.strip()
-            name = name.split("/")
-            o.write("{:40s} {:40s} {:40s}".format(name[-1], line[4], line[10]))
+        "results/simplified/{sample}.tab"
+    shell:
+        "cut -f 5,11  {input} > {output}"
+
+
+
+
+
+
+
+#for file in FILES
+#    for line in file:
+#        line = line.strip()
+#        line = line.split("\t")
+#        name = line[0]
+#        name = name.strip()
+#        name = name.split("/")
+#        print("{:40s} {:40s} {:40s}".format(name[-1], line[4], line[10]))
