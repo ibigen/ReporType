@@ -1,0 +1,181 @@
+
+######CHECK AND MAKE DB #########
+import pandas as pd
+import os
+db=str(input('Witch virus do you wish to study (write the whole name)? '))
+def db_check (db):
+    for i in shell("abricate --list", iterable=True):
+        if db in i:
+            check = 1
+            break
+        else:
+            check = 0
+    return (check)
+
+def path_check(path):
+    exist=os.path.exists(path)
+    if exist==False:
+        print("The given path does not exist!")
+    return(exist)
+
+def fasta_import():
+    path=str(input('To create the database, enter the path to the fasta file: '))
+    path=path.replace('"',"")
+    path=str(path)
+    return(path)
+
+check = db_check(db)
+
+while check == 0:
+    print('Database not available!')
+    fasta_path = fasta_import()
+    exist=path_check(fasta_path)
+    while exist ==False:
+        fasta_path = fasta_import()
+        exist=path_check(fasta_path)
+    else:
+        join=['"','"']
+        fasta_path=fasta_path.join(join)
+        print("")
+        shell("abricate",iterable=True)
+        print("Inicializing abricate...")
+        print("")
+        abricate_db = str(input('Now enter the path to abricate default database (check the --datadir default) '))
+        print("")
+        print ('Creating database...')
+        shell("mkdir {abricate_db}/{db}")
+        shell("cp {fasta_path} {abricate_db}/{db}/sequences")
+        shell("abricate --setupdb")
+        check = db_check(db)
+else:
+    print("")
+    print('Database available! Starting analysis...')
+
+
+
+
+############## SAMPLES INPUT ##############################
+
+def sample_imput():
+    path=str(input('Enter the path to the folder that contains samples to be analyzed: '))
+    path=path.replace('"',"")
+    path=str(path)
+    return(path)
+
+sample_path=sample_imput()
+exist=path_check(sample_path)
+
+while exist==False:
+    sample_path=sample_imput()
+    exist=path_check(sample_path)
+
+
+
+def files_path(*args):
+    l = []
+    for item in args:
+        for p, _, files in os.walk(os.path.abspath(item)):
+            for file in files:
+                if file.endswith(".fasta"):
+                    file=file.replace(".fasta","")
+                    l.append(file)
+    return l
+
+SAMPLES=files_path(sample_path)
+
+
+############## ANALYSIS ABRICATE #############################
+
+
+rule all:
+    input:
+        expand("results/simplified/{sample}.tab",sample = SAMPLES)
+
+rule abricate:
+    input:
+        expand("{path}{{sample}}.fasta", path=sample_path)
+    output:
+        "results/all/{sample}.tab"
+    shell:
+        "abricate --db {db} --nopath {input} > {output}"
+
+
+rule configurate:
+    input:
+        "results/all/{sample}.tab"
+    output:
+        "results/simplified/{sample}.tab"
+    shell:
+        "cut -f 1,5,11,9,10  {input} | sort -k 3 > {output}"
+
+
+def results_path():
+    FILES=[]
+    for p,_,files in os.walk(os.path.abspath("results/simplified/")):
+        for file in files:
+            file=os.path.join(p, file)
+            join=['"','"']
+            file=file.join(join)
+            FILES.append (file)
+    return (FILES)
+
+FILES = results_path()
+
+
+for file in FILES:
+    file = pd.read_table(file)
+    file=file.drop_duplicates(subset="GENE")dsaxadeasxwqsasalllok
+    file.to_csv("results/simplified/{sample.cskz, sep="\t", header=None, index=False)
+
+
+
+
+for file in os.path.abspath("/results/simplified/"):
+
+
+
+file=pd.read_table(file)
+file=file.drop_duplicates(subset="GENE")
+
+
+
+
+for file in os.listdir ("results/simplified/"):
+    file=os.path.abspath(file)
+    file=pd.read_table(file)
+    file=file.drop_duplicates(subset="GENE")
+
+print(os.path.abspath(file_name))
+*
+>>> for files in os.walk(os.path.abspath("results/simplified/*")):
+...     print(files)
+
+
+
+SAMPLE
+GENOTYPE
+Database
+CLOSEST MATCH
+%COV
+%ID
+with open ("to_run_06_draft_contigs.tab","r") as file:
+    STR=[]
+    for line in file:
+        line = line.strip()
+        line = line.split("\t")
+        str=str("{:40s} {:40s} {:40s}.format (line[4],line[8],line[10])")
+        STR.append (str)
+
+with open ("python.tab","a") as fileout:
+    for line in STR:
+        fileout.write (line)
+
+with open ("to_run_06_draft_contigs.tab","r") as file:
+    with open ("python.tab","a") as file_out:
+        for line in file:
+            line = line.strip()
+            line = line.split("\t")
+            file_out.write
+
+
+
