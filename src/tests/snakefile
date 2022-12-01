@@ -1,87 +1,187 @@
 
-######CHECK AND MAKE DB #########
 import pandas as pd
 import os
-db=str(input('Witch virus do you wish to study (write the whole name)? '))
-def db_check (db):
-    for i in shell("abricate --list", iterable=True):
-        if db in i:
-            check = 1
-            break
-        else:
-            check = 0
-    return (check)
+import subprocess
+from Bio import SeqIO
+
+###################### DB INPUT ###############################
+
+db=str(input('NAME OR FASTA'))
 
 def path_check(path):
     exist=os.path.exists(path)
-    if exist==False:
-        print("The given path does not exist!")
     return(exist)
 
-def fasta_import():
-    path=str(input('To create the database, enter the path to the fasta file: '))
+def db_check (db):
+    for i in shell("abricate --list", iterable=True):
+        if db in i:
+            check = True
+            break
+        else:
+            check = False
+    return (check)
+
+def fasta_import_to_abricate(path):
     path=path.replace('"',"")
     path=str(path)
     return(path)
 
-check = db_check(db)
+def abri_default_db():
+    i=subprocess.check_output("command abricate | grep datadir", shell=True)
+    i=str(i)
+    i=i.strip()
+    i=i.split("'")
+    path=i[-2]
+    return (path)
 
-while check == 0:
-    print('Database not available!')
-    fasta_path = fasta_import()
-    exist=path_check(fasta_path)
-    while exist ==False:
-        fasta_path = fasta_import()
-        exist=path_check(fasta_path)
+def name_db(path):
+    name=path.strip()
+    name=name.split("/")
+    name=name[-1]
+    name=name.split(".")
+    name=name[0]
+    return (name)
+
+
+fasta_check=path_check(db)
+
+if fasta_check==False:
+    db_check=db_check(db)
+    if db_check == False:
+        print("Input error: The DB name is incorrect or the given path to fasta file does not exist!")
     else:
-        join=['"','"']
-        fasta_path=fasta_path.join(join)
-        print("")
-        shell("abricate",iterable=True)
-        print("Inicializing abricate...")
-        print("")
-        abricate_db = str(input('Now enter the path to abricate default database (check the --datadir default) '))
-        print("")
-        print ('Creating database...')
-        shell("mkdir {abricate_db}/{db}")
-        shell("cp {fasta_path} {abricate_db}/{db}/sequences")
-        shell("abricate --setupdb")
-        check = db_check(db)
+        print('Database available! Starting analysis...')
 else:
-    print("")
-    print('Database available! Starting analysis...')
-
+    fasta_path=fasta_import_to_abricate(db)
+    join=['"','"']
+    fasta_path=fasta_path.join(join)
+    db_name=name_db(fasta_path)
+    db_check=db_check(db_name)
+    if db_check==False:
+        abricate_db=abri_default_db()
+        shell("mkdir {abricate_db}/{db_name}")
+        shell("cp {fasta_path} {abricate_db}/{db_name}/sequences")
+        shell("abricate --setupdb")
+        db_check=db_check(db_name)
+        if db_check == False:
+            print("Input error: Failed creating new database! Check the fasta file and respective path.")
+        else:
+            print('Database available! Starting analysis...')
+    else:
+       print('Database available! Starting analysis...')
 
 
 
 ############## SAMPLES INPUT ##############################
 
-def sample_imput():
-    path=str(input('Enter the path to the folder that contains samples to be analyzed: '))
+sample = str("CAMINHO PARA PASTA OU FICHEIRO")
+
+
+def sample_imput(path):
     path=path.replace('"',"")
     path=str(path)
     return(path)
 
-sample_path=sample_imput()
-exist=path_check(sample_path)
 
-while exist==False:
-    sample_path=sample_imput()
-    exist=path_check(sample_path)
-
-
-
-def files_path(*args):
+def fasta_path(*args):
     l = []
     for item in args:
         for p, _, files in os.walk(os.path.abspath(item)):
             for file in files:
-                if file.endswith(".fasta"):
+                if file.endswith(".fasta") or file.endswith(".fa") or file.endswith(".fna"):
                     file=file.replace(".fasta","")
+                    file=file.replace(".fa","")
+                    file=file.replace(".fna","")
                     l.append(file)
     return l
 
-SAMPLES=files_path(sample_path)
+def sanger_path(*args):
+    l = []
+    for item in args:
+        for p, _, files in os.walk(os.path.abspath(item)):
+            for file in files:
+                if file.endswith(".ab1"):
+                    file=file.replace(".ab1","")
+                    l.append(file)
+    return l
+
+def illumina_or_nano_path(*args):
+    l = []
+    for item in args:
+        for p, _, files in os.walk(os.path.abspath(item)):
+            for file in files:
+                if file.endswith(".fastq.gz"):
+                    path=os.path.join(p, file)
+                    l.append(path)
+    return l
+
+def illumina_vs_nano(l):
+    with open (file,"r") as file:
+        line = file.readlines()
+        line=str(line)
+        line=line.strip()
+        if len(line[1])<=700:
+            illumina=True
+    return illumina
+
+
+def path_change(path,tecnology):
+    path=str(path)
+    path=path[:-1]
+    tecnology=str(tecnology)
+    path=path+"_"+tecnology+"/"
+    return path
+
+sample_path=sample_imput(sample)
+exist=path_check(sample_path)
+
+
+ILL_OR_NANO=illumina_or_nano_path(sample_path)
+
+if len(ILL_OR_NANO) != 0:
+    ILL=[]
+    NANO=[]
+    for file in ILL_OR_NANO:
+        illumina=illumina_vs_nano(ILLUMINA_OR_NANO)
+        file=file.strip()
+        file=file.split("/")
+        file=file[-1]
+        file=file.replace(".fastq.gz","")
+        if illumina == True:
+            ILL.append(file)
+        else:
+            NANO.append(file)
+else:
+    ILL=[]
+    NANO=[]
+
+
+
+if exist==False:
+    print("Input error: The sample path given is not correct!")
+else:
+    FASTA=fasta_path(sample_path)
+    SANGER = sanger_path(sample_path)
+    if len(FASTA)!=0:
+        path=path_change(sample_path,"fasta")
+        shell("mv {sample_path} {path}" )
+        fasta_path=path
+        SAMPLES=FASTA
+    elif len(ILL)!=0:
+        path=path_change(sample_path,"illumina")
+        shell("mv {sample_path} {path}" )
+        ill_path=path
+        SAMPLES=ILLUMINA
+    elif len(NANO)!=0:
+        path=path_change(sample_path,"nanopore")
+        shell("mv {sample_path} {path}" )
+        nano_path=path
+        SAMPLES=NANOPORE
+    elif len(SANGER)!=0:
+        path=path_change(sample_path,"sanger")
+        shell("mv {sample_path} {path}" )
+        sanger_path=path
+        SAMPLES=SANGER
 
 
 ############## ANALYSIS ABRICATE #############################
@@ -91,9 +191,43 @@ rule all:
     input:
         expand("results/simplified/{sample}.tab",sample = SAMPLES)
 
+rule sanger:
+    input:
+        expand("{path}{{sample}}.ab1", path=sanger_path)
+    output:
+         temp("results/fasta_files/{sample}.fasta")
+    shell:
+        "abiview {input} -graph none -startbase 20 -endbase 800 -osformat2 fasta -outseq {output}"
+    ##############OUUUUUUUUUUUU######
+    #run:
+     #   record = SeqIO.parse({input}, "abi")
+#        count = SeqIO.write(record,{output}, "fasta")
+
+
+#rule nanopore:
+#    input:
+#        expand("{path}{{sample}}.ab1", path=nano_path)
+#    output:
+#        temp("results/fasta_files/{sample}.fasta")
+
+
+#rule illumina:
+#    input:
+#        expand("{path}{{sample}}.ab1", path=ill_path)
+#    output:
+#        temp("results/fasta_files/{sample}.fasta")
+
+rule fasta:
+    input:
+        expand("{path}{{sample}}.fasta", path=fasta_path)
+    output:
+        temp("results/fasta_files/{sample}.fasta")
+    shell:
+        "cp {input} {output}"
+
 rule abricate:
     input:
-        expand("{path}{{sample}}.fasta", path=sample_path)
+        "results/fasta_files/{sample}.fasta"
     output:
         "results/all/{sample}.tab"
     shell:
@@ -109,76 +243,87 @@ rule configurate:
         "cut -f 1,5,11,9,10  {input} | sort -k 3 > {output}"
 
 
-def results_path():
+
+######################TABLE ORGANIZATION######################
+
+def results_path(path):
     FILES=[]
-    for p,_,files in os.walk(os.path.abspath("results/simplified/")):
+    for p,_,files in os.walk(os.path.abspath(path)):
         for file in files:
             file=os.path.join(p, file)
-            join=['"','"']
-            file=file.join(join)
             FILES.append (file)
     return (FILES)
 
-FILES = results_path()
+def types (list,coverage,id,gene): #######acrescentar outros
+    SUB_I=[]
+    for i in range(len(list)):
+        if list[i] == 'type' or list[i] == 'lineage' or list[i] == 'species' :
+            id_type=gene[i]+'-'+str(id[i])
+            cov_type=gene[i]+'-'+str(coverage[i])
+            gene_type=gene[i]
+        if list[i] == 'subtype' or list[i] == 'genus' :
+            SUB_I.append(int(i))
+            ID=[]
+            COV=[]
+            GENE=[]
+            for x in SUB_I:
+                id_sueb=str(gene[x])+'-'+str(id[x])
+                cov_sueb=str(gene[x])+'-'+str(coverage[x])
+                gene_sueb=str(gene[x])
+                ID.append(id_sueb)
+                COV.append(cov_sueb)
+                GENE.append(gene_sueb)
+            join='::'
+            id_sub=join.join(ID)
+            cov_sub=join.join(COV)
+            gene_sub=join.join(GENE)
+    return id_type,cov_type,gene_type,id_sub,cov_sub,gene_sub
 
+def check_only_type(database,TYPES):
+    for i in range(len(TYPES)):
+        if database == TYPES[i]:
+            unique=True
+        else:
+            unique=False
+    return(unique)
+
+FILES = results_path("results/simplified/")
 
 for file in FILES:
     file = pd.read_table(file)
-    file=file.drop_duplicates(subset="GENE")dsaxadeasxwqsasalllok
-    file.to_csv("results/simplified/{sample.cskz, sep="\t", header=None, index=False)
-
-
-
-
-for file in os.path.abspath("/results/simplified/"):
-
-
-
-file=pd.read_table(file)
-file=file.drop_duplicates(subset="GENE")
-
-
-
-
-for file in os.listdir ("results/simplified/"):
-    file=os.path.abspath(file)
-    file=pd.read_table(file)
     file=file.drop_duplicates(subset="GENE")
+    type=file["DATABASE"]
+    TYPES=[]
+    DBS=[]
+    for line in type:
+        line=line.strip()
+        type=line.split('_')[-1]
+        if type !='DATABASE':
+            TYPES.append(type)
+        database=line.split('_')[0]
+        if database!='DATABASE':
+            DBS.append(database)
+    database=DBS[1]
+    unique= check_only_type(database,TYPES)
+    if unique == True:
+        file.to_csv("results/simplified/all_samples.csv",sep="\t",header=False, index=False,mode='a')
+    else:
+        file["DATABASE"]=[database,"",""]
+        coverage=file["%COVERAGE"]
+        id=file['%IDENTITY']
+        gene=file['GENE']
+        id_type,cov_type,gene_type,id_sub,cov_sub,gene_sub=types(TYPES,coverage,id,gene)
+        join="::"
+        file['%IDENTITY']=[id_type+join+id_sub,"",""]
+        file['GENE']=[gene_type+join+gene_sub,"",""]
+        file['%COVERAGE']=[cov_type+join+cov_sub,"",""]
+        file=file[:1]
+	final_file=file.to_csv("results/simplified/all_samples.csv",sep="\t",header=False, index=False,mode='a')
 
-print(os.path.abspath(file_name))
-*
->>> for files in os.walk(os.path.abspath("results/simplified/*")):
-...     print(files)
 
-
-
-SAMPLE
-GENOTYPE
-Database
-CLOSEST MATCH
-%COV
-%ID
-with open ("to_run_06_draft_contigs.tab","r") as file:
-    STR=[]
-    for line in file:
-        line = line.strip()
-        line = line.split("\t")
-        str=str("{:40s} {:40s} {:40s}.format (line[4],line[8],line[10])")
-        STR.append (str)
-
-with open ("python.tab","a") as fileout:
-    for line in STR:
-        fileout.write (line)
-
-with open ("to_run_06_draft_contigs.tab","r") as file:
-    with open ("python.tab","a") as file_out:
-        for line in file:
-            line = line.strip()
-            line = line.split("\t")
-            file_out.write
-
+final_file=pd.read_csv("results/simplified/all_samples.csv", names=['SAMPLE','GENE','COVERAGE(%)','IDENTITY(%)','DATATBASE'])
+final_file.to_csv("results/simplified/all_samples.csv",sep="\t",header=True, index=False,mode='w')
 
 
 
-DCDCsd.c.sd,vp,dscldsc,x n -
-__-.,.,,l
+
