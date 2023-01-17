@@ -4,9 +4,12 @@ import os
 import subprocess
 from Bio import SeqIO
 
-###################### DB INPUT ###############################
+###################### USER  INPUTS  ###############################
 
 db=str(input('NAME OR FASTA'))
+sample = str("CAMINHO PARA PASTA OU FICHEIRO")
+
+###################### DB INPUT ###############################
 
 def path_check(path):
     exist=os.path.exists(path)
@@ -71,10 +74,21 @@ else:
        print('Database available! Starting analysis...')
 
 
+############## MODULE SNAKEMAKE ##########################
+from snakemake.utils import min_version:
+min_version("6.0")
+
+module other_snakefike:
+    snakefile:
+        ##diretoria
+
 
 ############## SAMPLES INPUT ##############################
 
-sample = str("CAMINHO PARA PASTA OU FICHEIRO")
+fasta_extension=(".fasta",".fa",".fna")
+fastq_extension=(".fastq.gz",".fq.gz")
+FASTA_EXTENSION=[".fasta",".fa",".fna"]
+FASTQ_EXTENSION=[".fastq.gz",".fq.gz"]
 
 
 def sample_imput(path):
@@ -88,7 +102,7 @@ def fasta_path(*args):
     for item in args:
         for p, _, files in os.walk(os.path.abspath(item)):
             for file in files:
-                if file.endswith(".fasta") or file.endswith(".fa") or file.endswith(".fna"):
+                if file.endswith(fasta_extension):
                     file=file.replace(".fasta","")
                     file=file.replace(".fa","")
                     file=file.replace(".fna","")
@@ -110,7 +124,7 @@ def illumina_or_nano_path(*args):
     for item in args:
         for p, _, files in os.walk(os.path.abspath(item)):
             for file in files:
-                if file.endswith(".fastq.gz"):
+                if file.endswith(fastq_extension) :
                     path=os.path.join(p, file)
                     l.append(path)
     return l
@@ -147,6 +161,7 @@ if len(ILL_OR_NANO) != 0:
         file=file.split("/")
         file=file[-1]
         file=file.replace(".fastq.gz","")
+        file=file.replace(".fq.gz","")
         if illumina == True:
             ILL.append(file)
         else:
@@ -163,15 +178,24 @@ else:
     FASTA=fasta_path(sample_path)
     SANGER = sanger_path(sample_path)
     if len(FASTA)!=0:
+        use rule fasta from other_snakefike as other_fasta
         path=path_change(sample_path,"fasta")
         shell("mv {sample_path} {path}" )
         fasta_path=path
         SAMPLES=FASTA
-    elif len(ILL)!=0:
+    elif len(ILL)!=0: ###########definir se tem um ou mais
         path=path_change(sample_path,"illumina")
         shell("mv {sample_path} {path}" )
         ill_path=path
         SAMPLES=ILLUMINA
+    #    if len(ILL)==1:
+     #       ill_path_single=ill_path
+   #     elif len(ILL)==2:
+    #        for i in ILL:
+            ##########ver amostras para completar com caracteristica
+            ###nome acaba com 1 ou 2?
+
+
     elif len(NANO)!=0:
         path=path_change(sample_path,"nanopore")
         shell("mv {sample_path} {path}" )
@@ -185,7 +209,6 @@ else:
 
 
 ############## ANALYSIS ABRICATE #############################
-
 
 rule all:
     input:
@@ -204,47 +227,11 @@ rule sanger:
 #        count = SeqIO.write(record,{output}, "fasta")
 
 
-#rule nanopore:
-#    input:
-#        expand("{path}{{sample}}.ab1", path=nano_path)
-#    output:
-#        temp("results/fasta_files/{sample}.fasta")
-
-
-#rule illumina:
-#    input:
-#        expand("{path}{{sample}}.ab1", path=ill_path)
-#    output:
-#        temp("results/fasta_files/{sample}.fasta")
-
-rule fasta:
-    input:
-        expand("{path}{{sample}}.fasta", path=fasta_path)
-    output:
-        temp("results/fasta_files/{sample}.fasta")
-    shell:
-        "cp {input} {output}"
-
-rule abricate:
-    input:
-        "results/fasta_files/{sample}.fasta"
-    output:
-        "results/all/{sample}.tab"
-    shell:
-        "abricate --db {db} --nopath {input} > {output}"
-
-
-rule configurate:
-    input:
-        "results/all/{sample}.tab"
-    output:
-        "results/simplified/{sample}.tab"
-    shell:
-        "cut -f 1,5,11,9,10  {input} | sort -k 3 > {output}"
-
-
 
 ######################TABLE ORGANIZATION######################
+
+
+
 
 def results_path(path):
     FILES=[]
@@ -256,6 +243,7 @@ def results_path(path):
 
 def types (list,coverage,id,gene): #######acrescentar outros
     SUB_I=[]
+    id_type,cov_type,gene_type,id_sub,cov_sub,gene_sub=(None,None,None,None,None,None)
     for i in range(len(list)):
         if list[i] == 'type' or list[i] == 'lineage' or list[i] == 'species' :
             id_type=gene[i]+'-'+str(id[i])
@@ -273,10 +261,11 @@ def types (list,coverage,id,gene): #######acrescentar outros
                 ID.append(id_sueb)
                 COV.append(cov_sueb)
                 GENE.append(gene_sueb)
-            join='::'
+            join=';'
+            join1=''
             id_sub=join.join(ID)
             cov_sub=join.join(COV)
-            gene_sub=join.join(GENE)
+            gene_sub=join1.join(GENE)
     return id_type,cov_type,gene_type,id_sub,cov_sub,gene_sub
 
 def check_only_type(database,TYPES):
@@ -313,12 +302,12 @@ for file in FILES:
         id=file['%IDENTITY']
         gene=file['GENE']
         id_type,cov_type,gene_type,id_sub,cov_sub,gene_sub=types(TYPES,coverage,id,gene)
-        join="::"
+        join=";"
         file['%IDENTITY']=[id_type+join+id_sub,"",""]
-        file['GENE']=[gene_type+join+gene_sub,"",""]
+        file['GENE']=[gene_type+'-'+gene_sub,"",""]
         file['%COVERAGE']=[cov_type+join+cov_sub,"",""]
         file=file[:1]
-	final_file=file.to_csv("results/simplified/all_samples.csv",sep="\t",header=False, index=False,mode='a')
+	    file.to_csv("results/simplified/all_samples.csv",sep="\t",header=False, index=False,mode='a')
 
 
 final_file=pd.read_csv("results/simplified/all_samples.csv", names=['SAMPLE','GENE','COVERAGE(%)','IDENTITY(%)','DATATBASE'])
@@ -326,4 +315,4 @@ final_file.to_csv("results/simplified/all_samples.csv",sep="\t",header=True, ind
 
 
 
-
+shell("mv {sample_path} {path}" )
