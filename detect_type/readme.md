@@ -1,4 +1,4 @@
-# Detect_type
+# Detect_type - RAW VERSION
 
 
 Detect_type is a user-friendly [Snakemake](https://snakemake.readthedocs.io/en/stable/index.html) pipeline that identifies the variant of a given species (virus or bacteria) under study.
@@ -11,7 +11,7 @@ The main output consists of a .csv file with the sample name, the genes found, c
 It will also produce the detailed Abricate output files and the intermidiate files that are produced by other software (trimmed samples, etc...).
 
 
-![alt text](detect_type/images/Illustrative scheme.png.png)
+![alt text](https://github.com/ibigen/loci_screening_typing/blob/main/detect_type/images/Illustrative%20scheme.png.png)
 
 
 ## Instalation
@@ -35,33 +35,33 @@ available for detec_type. You can check the Snakemake original comands [here](ht
 
 In addition to all the options that Snakemake offers, there are some that are unique to detect_type:
 
-\t **-d, --database** &rarr;  (Mandatory) Insert the name of the database for the samples you want to analyse (standard: influenza). If is the first time using this databse you need to add the path to the fasta file contining the database, a new database will be created with the name of the given fasta file (standard: /path_to_database_file/influenza.fasta)
+   - **-d, --database** &rarr;  (Mandatory) Insert the name of the database for the samples you want to analyse (standard: influenza). If is the first time using this databse you need to add the path to the fasta file contining the database, a new database will be created with the name of the given fasta file (standard: /path_to_database_file/influenza.fasta)
 
 
-\t **-i, --input**  &rarr; (Mandatory) Insert the path to the folder with the samples you wish to analyse (standard:path_to/my_samples). This folder can contain samples from different technologies, as long as they are all analyzed according to the same database.
+   - **-i, --input**  &rarr; (Mandatory) Insert the path to the folder with the samples you wish to analyse (standard:path_to/my_samples). This folder can contain samples from different technologies, as long as they are all analyzed according to the same database.
 
 
-\t **-o, --output**  &rarr; Chose the name of your final csv output file (default="all_samples").
+   - **-o, --output**  &rarr; Chose the name of your final csv output file (default="all_samples").
+ 
+
+   - **-t, --tecnology**  &rarr;  Opcionally, especify the tecnologies you are going to analyse (default="any"). If you leave it with the default, all samples of the given folder will be analysed. Choices: 'fasta', 'nanopore', 'illumina_single', 'illumina_paired', 'sanger' or 'any'.
 
 
-\t **-t, --tecnology**  &rarr;  Opcionally, especify the tecnologies you are going to analyse (default="any"). If you leave it with the default, all samples of the given folder will be analysed. Choices: 'fasta', 'nanopore', 'illumina_single', 'illumina_paired', 'sanger' or 'any'.
-
-
-\t **-th, --threads** &rarr; Choose how many threads you which to use (default=2).
+   - **-th, --threads** &rarr; Choose how many threads you which to use (default=2).
 
 **Abricate params**
 
-\t **-minid, --abricate_minid** &rarr; Abricate params: Minimum DNA %identity (default=1).
+   - **-minid, --abricate_minid** &rarr; Abricate params: Minimum DNA %identity (default=1).
 
 
-\t **-mincov, --abricate_mincov** &rarr; Abricate params: Minimum DNA %coverage (default=1).
+   - **-mincov, --abricate_mincov** &rarr; Abricate params: Minimum DNA %coverage (default=1).
 
 **Sanger params**
 
-\t **-startbase, --abiview_startbase** &rarr; Abiview params: First base to report or display (default=20)
+   - **-startbase, --abiview_startbase** &rarr; Abiview params: First base to report or display (default=20)
 
 
-\t **-endbase, --abiview_endbase** &rarr; Abiview params: Last sequence base to report or display (default=800).
+   - **-endbase, --abiview_endbase** &rarr; Abiview params: Last sequence base to report or display (default=800).
 
 
 ### Comand line
