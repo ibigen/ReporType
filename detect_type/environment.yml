@@ -1,0 +1,16 @@
+name: detect_type
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.11.0
+  - pandas=1.5.3
+  - numpy=1.24.2
+  - biopython=1.81
+  - snakemake=7.22.0
+  - abricate=1.0.1
+  - raven=1.8.1
+  - spades=3.13.1
+  - trimmomatic=0.39
+  - emboss=6.6.0.0
+  - nanofilt=2.8.0

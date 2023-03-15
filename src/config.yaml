@@ -1,0 +1,45 @@
+#Use this file to give your inputs
+
+#Insert the database name of the virus you want to analyse, if it's the first time, please insert all the path to the fasta file
+virus:
+  "influenza"
+
+#Insert the path to the folder with your samples
+sample_directory:
+  "/home/helena_cruz/detect_type_test/sequences/influenza/"
+
+#Chose the name of your final output file
+final_output_name:
+  "all_samples_influenza"
+
+#Insert the path to the Table_configuration.py file (Don't need to change if the file is on the same folder as detect_type)
+table_configuration_directory:
+  "table_configuration.py"
+
+
+#Opcionally, especify the tecnologies you are going to analyse (fasta, nanopore, illumina_single, illumina_paired, sanger)
+tecnology:
+- any
+
+
+#Now you can change some params for your analysis
+#Here you can choose how many threads you which to use
+threads:
+  2
+
+#Abricate params
+minid:
+  1
+
+mincov:
+  1
+
+#Sanger params
+startbase:
+  20
+
+endbase:
+  800
+
+
+
