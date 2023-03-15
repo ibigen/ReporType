@@ -20,7 +20,7 @@ All the other dependencies will be automatically installed with detect_type.
 For installation, you need to:
 
 1. Download this git repository:<br>
-`git clone https://github.com/ibigen/loci_screening_typing/detect_type`
+`git clone https://github.com/ibigen/loci_screening_typing/tree/main/detect_type`
 
 2. Install running:<br>
 `chmod +x install.sh`<br>
