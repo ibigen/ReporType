@@ -1,4 +1,4 @@
-# Detect_type
+# Detect_type - RAW VERSION
 
 
 Detect_type is a user-friendly [Snakemake](https://snakemake.readthedocs.io/en/stable/index.html) pipeline that identifies the variant of a given species (virus or bacteria) under study.
