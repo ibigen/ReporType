@@ -11,7 +11,7 @@ The main output consists of a .csv file with the sample name, the genes found, c
 It will also produce the detailed Abricate output files and the intermidiate files that are produced by other software (trimmed samples, etc...).
 
 
-![alt text](detect_type/images/Illustrative scheme.png.png)
+![alt text](https://github.com/ibigen/loci_screening_typing/blob/main/detect_type/images/Illustrative%20scheme.png.png)
 
 
 ## Instalation
@@ -35,7 +35,7 @@ available for detec_type. You can check the Snakemake original comands [here](ht
 
 In addition to all the options that Snakemake offers, there are some that are unique to detect_type:
 
-\t **-d, --database** &rarr;  (Mandatory) Insert the name of the database for the samples you want to analyse (standard: influenza). If is the first time using this databse you need to add the path to the fasta file contining the database, a new database will be created with the name of the given fasta file (standard: /path_to_database_file/influenza.fasta)
+   - **-d, --database** &rarr;  (Mandatory) Insert the name of the database for the samples you want to analyse (standard: influenza). If is the first time using this databse you need to add the path to the fasta file contining the database, a new database will be created with the name of the given fasta file (standard: /path_to_database_file/influenza.fasta)
 
 
 \t **-i, --input**  &rarr; (Mandatory) Insert the path to the folder with the samples you wish to analyse (standard:path_to/my_samples). This folder can contain samples from different technologies, as long as they are all analyzed according to the same database.
