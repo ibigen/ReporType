@@ -4,7 +4,7 @@
 Detect_type is a user-friendly [Snakemake](https://snakemake.readthedocs.io/en/stable/index.html) pipeline that identifies the variant of a given species (virus or bacteria) under study.
 
 This pipeline uses [Abricate](https://github.com/tseemann/abricate) for variant identification and other independent software that prepares samples priviously analysed with illumina, nanopore and sanger technologies, to be analysed by Abricate.
-the other software used are specified in the illustrative scheme.
+The other software used are specified in the illustrative scheme.
 
 Detect_type accepts as samples input .fasta, .fastq and .ab1 files, zipped or not, and will also require a database name or database fasta file input. 
 The main output consists of a .csv file with the sample name, the genes found, coverage and identity percentage, the database used and the accession.
@@ -19,19 +19,24 @@ You need to have  [conda](https://docs.conda.io/projects/conda/en/latest/user-gu
 All the other dependencies will be automatically installed with detect_type.
 For installation, you need to:
 
+
 1. Download this git repository:<br>
-`git clone https://github.com/ibigen/loci_screening_typing/detect_type`
+`mkdir detect_type; cd detect_type`  (optional)<br>
+`git clone https://github.com/ibigen/loci_screening_typing/tree/main/detect_type`
 
 2. Install running:<br>
 `chmod +x install.sh`<br>
 `./install.sh`
 
-3. Activate the detect_type environment:<br>
-`conda activate detect_type`
 
 ## Usage
-Because detect_type is based on a Snakemake pipeline, all the comands available for Sankemake are also 
-available for detec_type. You can check the Snakemake original comands [here](https://snakemake.readthedocs.io/en/v5.1.4/executable.html).
+
+First of all, you need to activate the detect_type environment:<br>
+`conda activate detect_type`
+
+
+Because detect_type is based on a Snakemake pipeline, all the commands available for Sankemake are also 
+available for detec_type. You can check the Snakemake original commands [here](https://snakemake.readthedocs.io/en/v5.1.4/executable.html).
 
 In addition to all the options that Snakemake offers, there are some that are unique to detect_type:
 
@@ -64,7 +69,7 @@ In addition to all the options that Snakemake offers, there are some that are un
    - **-endbase, --abiview_endbase** &rarr; Abiview params: Last sequence base to report or display (default=800).
 
 
-### Comand line
+### Command line
 
 A simple exemple of a executable command line woud be:<br>
 `detect_type --cores all -d /path_to_database_file/influenza.fasta -i path_to/my_samples`
@@ -77,3 +82,8 @@ Note that `--cores all` is need for a snakefile to run, but theres other Snakema
 
 When you are donne using detect_type you can deactivate the environment with:<br>
 `conda deactivate detect_type`
+
+
+## Uninstall
+## Citation
+
