@@ -21,7 +21,7 @@ For installation, you need to:
 
 
 1. Download this git repository:<br>
-`mkdir detect_type; cd detect_type`  (optional)
+`mkdir detect_type; cd detect_type`  (optional)<br>
 `git clone https://github.com/ibigen/loci_screening_typing/tree/main/detect_type`
 
 2. Install running:<br>
