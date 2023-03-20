@@ -24,6 +24,7 @@ For installation, you need to:
 `git clone https://github.com/ibigen/loci_screening_typing/`
 
 2. Install running:<br>
+`conda create -n myenv python=3.10`<br>
 `chmod +x install.sh`<br>
 `./install.sh`
 
