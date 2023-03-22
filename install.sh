@@ -1,7 +1,7 @@
 #!/bin/bash
 echo "Starting detect_type installation!"
 
-conda create -n detect_type python=3.10
+conda create -n detect_type python=3.8
 
 source activate detect_type
 
@@ -13,10 +13,10 @@ echo "Checking dependencies instalation..."
 
 ##Testar instalação de dependências
 # Testa a versão do Python
-if python3 --version | grep -q "Python 3.2"; then
-    echo "Python 3.10.9 installed correctly"
+if python3 --version | grep -q "Python 3.8"; then
+    echo "Python 3.8 installed correctly"
 else
-    echo "Error installing Python 3.10.9"
+    echo "Error installing Python 3.8"
 fi
 
 # Testa a versão do Pandas
