@@ -2,10 +2,10 @@ channels:
   - bioconda
   - conda-forge
 dependencies:
+  - nanofilt
   - abricate=1.0.1
-  - raven-assembler=1.8.1
-  - spades=3.13.1
-  - trimmomatic=0.39
-  - emboss=6.6.0.0
-  - nanofilt=2.8.0
+  - spades
+  - raven-assembler
+  - trimmomatic
+  - emboss
 
