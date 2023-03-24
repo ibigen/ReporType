@@ -7,87 +7,88 @@ source activate detect_type
 
 pip install -r requirements.txt
 
-conda env update -f environment.yml
+echo "Start softwares in conda..."
+conda install -c bioconda -c conda-forge nanofilt --yes
+conda install -c bioconda -c conda-forge spades --yes
+conda install -c bioconda -c conda-forge abricate=1.0.1 --yes
+conda install -c bioconda -c conda-forge raven-assembler trimmomatic emboss --yes
 
 echo "Checking dependencies instalation..."
 
-##Testar instalação de dependências
-# Testa a versão do Python
-if python3 --version | grep -q "Python 3.8"; then
-    echo "Python 3.8 installed correctly"
+
+# Testing Python instalation
+if python3 --version | grep -q "Python"; then
+    echo "Python correctly"
 else
-    echo "Error installing Python 3.8"
+    echo "Error installing Python"
 fi
 
-# Testa a versão do Pandas
-if python3 -c "import pandas; print(pandas.__version__)" | grep -q "1.4.2"; then
-    echo "Pandas 1.5.3 installed correctly"
+# Testing Pandas instalation
+if python3 -c "import pandas; print('pandas', pandas.__version__)" | grep -q "pandas"; then
+    echo "Pandas installed correctly"
 else
-    echo "Error installing Pandas 1.4.2"
+    echo "Error installing Pandas"
 fi
 
-# Testa a versão do NumPy
-if python3 -c "import numpy; print(numpy.__version__)" | grep -q "1.22.3"; then
-    echo "NumPy 1.22.3 installed correctly"
+# Testing NumPy instalation
+if python3 -c "import numpy; print('numpy',numpy.__version__)" | grep -q "numpy"; then
+    echo "NumPy installed correctly"
 else
-    echo "Error installing NumPy 1.22.3"
+    echo "Error installing NumPy"
 fi
 
-# Testa a versão do Biopython
-if python3 -c "import Bio; print(Bio.__version__)" | grep -q "1.81"; then
-    echo "Biopython 1.81 installed correctly"
+# Testing Biopython instalation
+if python3 -c "import Bio; print('biopython',Bio.__version__)" | grep -q "biopython"; then
+    echo "Biopython installed correctly"
 else
-    echo "Error installing Biopython 1.81"
+    echo "Error installing Biopython"
 fi
 
-# Testa a versão do Snakemake
-if snakemake --version | grep -q "7.22.0"; then
-    echo "Snakemake 7.22.0 installed correctly"
+# Testing Snakemake instalation
+if command -v snakemake >/dev/null 2>&1 ; then
+    echo "Snakemake installed correctly"
 else
-    echo "Error installing Snakemake 7.22.0"
+    echo "Erro installing o Snakemake."
 fi
 
-# Testa a versão do Abricate
-if abricate --version | grep -q "1.0.1"; then
-    echo "Abricate 1.0.1 installed correctly"
+# Testing Abricate instalation
+if abricate --version | grep -q "abricate"; then
+    echo "Abricate installed correctly"
 else
-    echo "Error installing Abricate 1.0.1"
+    echo "Error installing Abricate"
 fi
 
-# Testa a versão do Raven
-if raven --version | grep -q "1.8.1"; then
-    echo "Raven 1.8.1 installed correctly"
+# Testing Raven instalation
+if command -v raven >/dev/null 2>&1 ; then
+    echo "Raven installed correctly"
 else
-    echo "Error installing Raven 1.8.1"
+    echo "Erro installing Raven"
 fi
 
-# Testa a versão do SPAdes
-if spades.py --test | grep -q "test passed"; then
-    echo "SPAdes 3.13.1 installed correctly"
+# Testing SPAdes instalation
+if spades.py --version | grep -q "SPAdes genome assembler"; then
+    echo "SPAdes installed correctly"
 else
-    echo "Error installing SPAdes 3.13.1"
+    echo "Error installing SPAdes"
 fi
 
-# Testa a versão do Trimmomatic
-if trimmomatic -version | grep -q "0.39"; then
-    echo "Trimmomatic 0.39 installed correctly"
+# Testing trimmomatic instalation
+if command -v trimmomatic >/dev/null 2>&1 ; then
+    echo "Trimmomatic installed correctly"
 else
-    echo "Error installing Trimmomatic 0.39"
+    echo "Erro installing Trimmomatic."
 fi
 
-# Testa a versão do EMBOSS
-if abiview --version | grep -q "EMBOSS:6.6.0.0"; then
-    echo "EMBOSS 6.6.0.0 installed correctly"
+# Testing EMBOSS instalation
+if which abiview | grep -q "abiview"; then
+    echo "EMBOSS installed correctly"
 else
-    echo "Error installing EMBOSS 6.6.0.0"
+    echo "Error installing EMBOSS"
 fi
 
-# Testa a versão do NanoFilt
-if NanoFilt --version | grep -q "2.8.0"; then
-    echo "NanoFilt 2.8.0 installed correctly"
+# Testing NanoFilt instalation
+if NanoFilt --version | grep -q "NanoFilt"; then
+    echo "NanoFilt installed correctly"
 else
-    echo "Error installing NanoFilt 2.8.0"
+    echo "Error installing NanoFilt"
 fi
-
-### Transformar comando "snakemake" em "detect_type"
-alias detect_type="conda activate detect_type && snakemake"

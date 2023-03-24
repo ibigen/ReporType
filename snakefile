@@ -11,49 +11,17 @@ import argparse
 
 ######################  INPUTS  ###############################
 
-# Define as opções de linha de comando
-parser = argparse.ArgumentParser(description='Detect_type extra opcions (using snakemake)')
+configfile: "config.yaml"
 
-parser.add_argument('-d', '--database', required=True, type=str,
-                     help='Insert the name of the database for the samples you want to analyse (standard: influenza).If is the first time using this databse you need to add the path to the fasta file contining the database, a new database will be created with the name of the given fasta file (standard: /path_to_database_file/influenza.fasta).')
+db = config["database"]
+sample_path = config["sample_directory"]
+threads = config["threads"]
+minid=config["minid"]
+mincov=config["mincov"]
+output=config["output_name"]
+tec_input=config["tecnology"]
 
-parser.add_argument('-i', '--input', required=True, type=str,
-                     help='Insert the path to the folder with the samples you wish to analyse (standard:path_to/my_samples). This folder can contain samples from different technologies, as long as they are all analyzed according to the same database.')
-
-parser.add_argument('-o', '--output', default="all_samples", type=str,
-                     help='Chose the name of your final csv output file (default="all_samples").')
-
-parser.add_argument('-t', '--tecnology', nargs='+', type=str, default=['any'], choices=['fasta','nanopore','illumina_single','illumina_paired','sanger','any'],
-                     help='Opcionally, especify the tecnologies you are going to analyse (default="any"). If you leave it with the default, all samples of the given folder will be analysed.')
-
-parser.add_argument('-th', '--threads', default=2, type=int,
-                     help='Choose how many threads you which to use (default=2).')
-
-parser.add_argument('-minid', '--abricate_minid', default=1, type=int,
-                     help='Abricate params: Minimum DNA %identity (default=1).')
-
-parser.add_argument('-mincov', '--abricate_mincov', default=1, type=int,
-                     help='Abricate params: Minimum DNA %coverage (default=1).')
-
-parser.add_argument('-startbase', '--abiview_startbase', default=20, type=int,
-                     help='Abiview params: First base to report or display (default=20).')
-
-parser.add_argument('-endbase', '--abiview_endbase', default=800, type=int,
-                     help='Abiview params: Last sequence base to report or display (default=800).')
-
-
-args, _ = parser.parse_known_args()
-
-db = args.database
-sample_path = args.input
-table = "table_configuration.py"   #########CHECK!!!!!!!!!!!!!!!
-threads = args.threads
-minid=args.abricate_minid
-mincov=args.abricate_mincov
-output=args.output
-startbase=args.abiview_startbase
-endbase=args.abiview_endbase
-tec_input=args.tecnology
+table = "table_configuration.py"  
 
 ###################### DB INPUT ###############################
 

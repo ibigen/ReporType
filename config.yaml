@@ -1,0 +1,54 @@
+############## Detec_type CONFIG ##################
+
+#Use this file to give your inputs
+
+#Insert the name of the database for the samples you want to analyse (example: influenza).
+#If is the first time using this databse you need to add the path to the fasta file contining the database, a new database will be created with the name of the given fasta file (example: /path_to_database_file/influenza.fasta).
+database:
+  "/home/helenaisc/loci_screening_typing/databases/monkeypox.fasta"
+
+
+#Insert the path to the folder with the samples you wish to analyse (example:path_to/my_samples). 
+#This folder can contain samples from different technologies, as long as they are all analyzed according to the same database.
+sample_directory:
+  "/home/helenaisc/loci_screening_typing/sequences/mpx/"
+  
+
+#Chose the name of your final csv output file (default="all_samples").
+output_name:
+  "all_samples"
+
+
+#Opcionally, especify the tecnologies you are going to analyse (default="any"). If you leave it with the default, all samples of the given folder will be analysed.
+#You opcions are:'fasta','nanopore','illumina_single','illumina_paired','sanger','any'.
+tecnology:
+- any
+
+
+#Now you can change some params for your analysis
+#Choose how many threads you which to use (default=2).
+threads:
+  2
+
+
+#Abricate params
+#Minimum DNA %identity (default=1).
+minid:
+  1
+
+#Minimum DNA %coverage (default=1).
+mincov:
+  1
+
+#Sanger params
+#Abiview params: First base to report or display (default=20).
+startbase:
+  20
+
+#Abiview params: Last sequence base to report or display (default=800).
+endbase:
+  800
+
+
+
+
