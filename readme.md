@@ -25,25 +25,21 @@ For installation, you need to:
 `$cd loci_screening_typing`
 
 2. Install running:<br>
-<<<<<<< HEAD
 `$chmod +x install.sh`<br>
 `$./install.sh`<br>
-=======
-`chmod +x install.sh`<br>
-`./install.sh`
->>>>>>> 4410158e68a330d0d8bf813a7b8dc58b36a0802c
 
 
 ## Usage
 
 First of all, you need to activate the detect_type environment:<br>
-`$alias detect_type="conda activate detect_type && snakemake"`
-`$conda activate detect_type`
+`$alias detect_type="conda activate detect_type && snakemake"`<br>
+`$conda activate detect_type`<br>
 
-Now open de "config.yaml" file and fill it with your options.
+Now open de "config.yaml" file and fill it with your options.<br>
 
-Execute the command line:
-`detect_type --cores all `
+Execute the command line:<br>
+`detect_type --cores all `<br>
+
 
 Note that `--cores all` is need for a snakefile to run, but theres other Snakemake exucutable options  [here](https://snakemake.readthedocs.io/en/v5.1.4/executable.html).
 
