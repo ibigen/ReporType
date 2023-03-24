@@ -1,0 +1,11 @@
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - nanofilt
+  - abricate=1.0.1
+  - spades
+  - raven-assembler
+  - trimmomatic
+  - emboss
+

@@ -25,8 +25,13 @@ For installation, you need to:
 `$cd loci_screening_typing`
 
 2. Install running:<br>
+<<<<<<< HEAD
 `$chmod +x install.sh`<br>
 `$./install.sh`<br>
+=======
+`chmod +x install.sh`<br>
+`./install.sh`
+>>>>>>> 4410158e68a330d0d8bf813a7b8dc58b36a0802c
 
 
 ## Usage
