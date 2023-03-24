@@ -413,7 +413,7 @@ if len(dt_fastq_illumina_pair['r1']) > 0:
         params:
             threads = threads
         shell:
-            """spades --pe1-1 {input.r1} --pe1-2 {input.r2} --only-assembler -t {params.threads} -o results/intermidiate/spades/{wildcards.sample} ||  echo Warning: spades failed, were created empty files;"""
+            """spades.py --pe1-1 {input.r1} --pe1-2 {input.r2} --only-assembler -t {params.threads} -o results/intermidiate/spades/{wildcards.sample} ||  echo Warning: spades failed, were created empty files;"""
             """cp results/intermidiate/spades/{wildcards.sample}/contigs.fasta {output} || touch {output}"""#; rm -rf results/intermidiate/spades/{wildcards.sample}"""
 
 
@@ -442,7 +442,7 @@ if len(list_illumina_fastq_single) > 0:
         params:
             threads = threads
         shell:
-            """spades -s {input.r1} --only-assembler -t {params.threads} -o results/intermidiate/spades/{wildcards.sample} || echo Warning: spades failed, were created empty files;"""
+            """spades.py -s {input.r1} --only-assembler -t {params.threads} -o results/intermidiate/spades/{wildcards.sample} || echo Warning: spades failed, were created empty files;"""
             """cp results/intermidiate/spades/{wildcards.sample}/contigs.fasta {output} || touch {output}"""#; rm -rf results/intermidiate/spades/{wildcards.sample}"""
 
 
