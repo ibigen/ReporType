@@ -3,15 +3,15 @@
 #Use this file to give your inputs
 
 #Insert the name of the database for the samples you want to analyse (example: influenza).
-#If is the first time using this databse you need to add the path to the fasta file contining the database, a new database will be created with the name of the given fasta file (example: /path_to_database_file/influenza.fasta).
+#If is the first time using this databse you need to add the path to the fasta file contining the database, a new database will be created with the name of the given fasta file (example: path/to/my_database.fasta).
 database:
-  "/home/helenaisc/loci_screening_typing/databases/monkeypox.fasta"
+  "path/to/my_database.fasta"
 
 
-#Insert the path to the folder with the samples you wish to analyse (example:path_to/my_samples). 
+#Insert the path to the folder with the samples you wish to analyse (example:path/to/my_samples_folder/). 
 #This folder can contain samples from different technologies, as long as they are all analyzed according to the same database.
 sample_directory:
-  "/home/helenaisc/loci_screening_typing/sequences/mpx/"
+  "path/to/my_samples_folder/"
   
 
 #Chose the name of your final csv output file (default="all_samples").
