@@ -38,7 +38,7 @@ First of all, you need to activate the detect_type environment:<br>
 Now open de "config.yaml" file and fill it with your options.<br>
 
 Execute the command line:<br>
-`detect_type --cores all `<br>
+`$detect_type --cores all `<br>
 
 
 Note that `--cores all` is need for a snakefile to run, but theres other Snakemake exucutable options  [here](https://snakemake.readthedocs.io/en/v5.1.4/executable.html).
@@ -48,7 +48,7 @@ Note that `--cores all` is need for a snakefile to run, but theres other Snakema
 
 
 When you are donne using detect_type you can deactivate the environment with:<br>
-`conda deactivate detect_type`
+`$conda deactivate detect_type`
 
 
 ## Uninstall
