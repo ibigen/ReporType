@@ -173,11 +173,13 @@ def __get_prefix_file_name(file_name):
     if (not m is None): return file_name[:m.regs[1][0]]
     m = re.search('[a-zA-Z0-9_\.]+(_[lL]\d+_[rR]\d+)[a-zA-Z0-9_\.]+', file_name)
     if (not m is None): return file_name[:m.regs[1][0]]
-    m = re.search('[a-zA-Z0-9_\.]+(_[rR]\d+_[lL]\d+)[a-zA-Z0-9_\.]+', file_name)
+    m = re.search('[a-zA-Z0-9_\.]+([_\.][rR]\d+_[lL]\d+)[a-zA-Z0-9_\.]+', file_name)
     if (not m is None): return file_name[:m.regs[1][0]]
     m = re.search('[a-zA-Z0-9_\.]+(_[lL]\d+)[a-zA-Z0-9_\.]+', file_name)
     if (not m is None): return file_name[:m.regs[1][0]]
-    m = re.search('[a-zA-Z0-9_\.]+(_[rR]\d+)[a-zA-Z0-9_\.]+', file_name)
+    m = re.search('[a-zA-Z0-9_\.]+([_\.][rR]\d)[_\.][a-zA-Z0-9_\.]+', file_name)
+    if (not m is None): return file_name[:m.regs[1][0]]
+    m = re.search('[a-zA-Z0-9_\.]+([_\.][rR]\d+)[a-zA-Z0-9_\.]+', file_name)
     if (not m is None): return file_name[:m.regs[1][0]]
     m = re.search('[a-zA-Z0-9_\.]+([_]reverse)[a-zA-Z0-9_\.]+', file_name.lower())
     if (not m is None): return file_name[:m.regs[1][0]]
@@ -196,17 +198,17 @@ def get_number_file(file_name):
     """ return the number of file
     :out None if not found  """
 
-    m = re.search('[a-zA-Z0-9_\.]+(_[rR]\d+)[a-zA-Z0-9_\.]+', file_name)
-    if (not m is None): return file_name[m.regs[1][0]:m.regs[1][1]].lower().replace('r', '').replace('_', '')
+    m = re.search('[a-zA-Z0-9_\.]+([_\.][rR]\d+)[a-zA-Z0-9_\.]+', file_name)
+    if (not m is None): return file_name[m.regs[1][0]:m.regs[1][1]].lower().replace('r', '').replace('_', '').replace('.', '')
 
-    m = re.search('[a-zA-Z0-9_\.]+(_\d+)[_\.][a-zA-Z0-9_\.]+', file_name)
-    if (not m is None): return file_name[m.regs[1][0]:m.regs[1][1]].lower().replace('_', '')
+    m = re.search('[a-zA-Z0-9_\.]+([_\.]\d+)[_\.][a-zA-Z0-9_\.]+', file_name)
+    if (not m is None): return file_name[m.regs[1][0]:m.regs[1][1]].lower().replace('_', '').replace('.', '')
 
-    m = re.search('[a-zA-Z0-9_\.]+([_]reverse)[a-zA-Z0-9_\.]+', file_name.lower())
-    if (not m is None): return file_name[m.regs[1][0]:m.regs[1][1]].lower().replace('_', '').replace('reverse', '2')
+    m = re.search('[a-zA-Z0-9_\.]+([_\.]reverse)[a-zA-Z0-9_\.]+', file_name.lower())
+    if (not m is None): return file_name[m.regs[1][0]:m.regs[1][1]].lower().replace('_', '').replace('.', '').replace('reverse', '2')
 
-    m = re.search('[a-zA-Z0-9_\.]+([_]forward)[a-zA-Z0-9_\.]+', file_name.lower())
-    if (not m is None): return file_name[m.regs[1][0]:m.regs[1][1]].lower().replace('_', '').replace('forward', '1')
+    m = re.search('[a-zA-Z0-9_\.]+([_\.]forward)[a-zA-Z0-9_\.]+', file_name.lower())
+    if (not m is None): return file_name[m.regs[1][0]:m.regs[1][1]].lower().replace('_', '').replace('.', '').replace('forward', '1')
     return None
 
 
@@ -313,7 +315,7 @@ if exist == False:
 else:
     ## test if windows or not and add the back slash to the end
     if os.name == 'nt':
-        sample_path += '\'
+        sample_path += "\\"
     elif not sample_path.endswith('/'):
         sample_path += '/'
 
