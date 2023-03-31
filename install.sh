@@ -3,18 +3,12 @@ echo "Starting detect_type installation!"
 
 conda create -n detect_type python=3.8
 
+echo "Start softwares in conda..."
 source activate detect_type
 
-pip install -r requirements.txt
+pip install -r requirements.txt && conda install -c bioconda -c conda-forge nanofilt --yes && conda install -c bioconda -c conda-forge spades --yes && conda install -c bioconda -c conda-forge abricate=1.0.1 --yes && conda install -c bioconda -c conda-forge raven-assembler trimmomatic emboss --yes
 
-echo "Start softwares in conda..."
-conda install -c bioconda -c conda-forge nanofilt --yes
-conda install -c bioconda -c conda-forge spades --yes
-conda install -c bioconda -c conda-forge abricate=1.0.1 --yes
-conda install -c bioconda -c conda-forge raven-assembler trimmomatic emboss --yes
-
-echo "Checking dependencies instalation..."
-
+echo "Checking instalation..."
 
 # Testing Python instalation
 if python3 --version | grep -q "Python"; then
@@ -92,3 +86,7 @@ if NanoFilt --version | grep -q "NanoFilt"; then
 else
     echo "Error installing NanoFilt"
 fi
+
+echo ""
+echo "To activate the enviroment $ source activate detect_type"
+echo ""
