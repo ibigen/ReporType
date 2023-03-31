@@ -12,6 +12,7 @@ conda create -n detect_type python=3.8
 echo "Install softwares in conda..."
 source activate detect_type && pip install -r requirements.txt && conda install nanofilt --yes && conda install spades --yes && conda install abricate=1.0.1 --yes && conda install raven-assembler trimmomatic emboss --yes;
 
+################
 echo "Checking instalation..."
 
 # Testing Python instalation
