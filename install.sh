@@ -86,7 +86,3 @@ if NanoFilt --version | grep -q "NanoFilt"; then
 else
     echo "Error installing NanoFilt"
 fi
-
-echo ""
-echo "To activate the enviroment $ source activate detect_type"
-echo ""
