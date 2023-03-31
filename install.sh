@@ -1,9 +1,15 @@
 #!/bin/bash
 echo "Starting detect_type installation!"
 
+## remove environment if exist
+if conda env list | grep "^detect_type" >/dev/null 2>&1; then
+    conda remove -n detect_type --all
+fi
+
+## create a new environment
 conda create -n detect_type python=3.8
 
-echo "Start softwares in conda..."
+echo "Install softwares in conda..."
 source activate detect_type && pip install -r requirements.txt && conda install nanofilt --yes && conda install spades --yes && conda install abricate=1.0.1 --yes && conda install raven-assembler trimmomatic emboss --yes;
 
 echo "Checking instalation..."
