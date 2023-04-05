@@ -169,15 +169,15 @@ def remove_extensions_file_name(file_name, vect_to_remove=FASTQ_EXTENSION):
 
 def __get_prefix_file_name(file_name):
     """ returnprefix file name based on patterns """
-    m = re.search('[a-zA-Z0-9_\.]+(_[lL]\d+_[rR]\d+_\d+)_[a-zA-Z0-9_\.]+', file_name)
+    m = re.search('[a-zA-Z0-9_\.]+(_[lL]\d+_[rR]\d+_\d+)_[a-zA-Z0-9_\.]+', file_name)  ##
     if (not m is None): return file_name[:m.regs[1][0]]
-    m = re.search('[a-zA-Z0-9_\.]+(_[lL]\d+_[rR]\d+)[a-zA-Z0-9_\.]+', file_name)
+    m = re.search('[a-zA-Z0-9_\.]+(_[lL]\d+_[rR]\d+)[a-zA-Z0-9_\.]+', file_name)  ##
     if (not m is None): return file_name[:m.regs[1][0]]
     m = re.search('[a-zA-Z0-9_\.]+([_\.][rR]\d+_[lL]\d+)[a-zA-Z0-9_\.]+', file_name)
     if (not m is None): return file_name[:m.regs[1][0]]
-    m = re.search('[a-zA-Z0-9_\.]+(_[lL]\d+)[a-zA-Z0-9_\.]+', file_name)
+    m = re.search('[a-zA-Z0-9_\.]+(_\d+[pP][_\.])[a-zA-Z0-9_\.]+', file_name)
     if (not m is None): return file_name[:m.regs[1][0]]
-    m = re.search('[a-zA-Z0-9_\.]+([_\.][rR]\d)[_\.][a-zA-Z0-9_\.]+', file_name)
+    m = re.search('[a-zA-Z0-9_\.]+([_\.][rR]\d)[_\.][a-zA-Z0-9_\.]+', file_name)	##
     if (not m is None): return file_name[:m.regs[1][0]]
     m = re.search('[a-zA-Z0-9_\.]+([_\.][rR]\d+)[a-zA-Z0-9_\.]+', file_name)
     if (not m is None): return file_name[:m.regs[1][0]]
@@ -198,10 +198,13 @@ def get_number_file(file_name):
     """ return the number of file
     :out None if not found  """
 
-    m = re.search('[a-zA-Z0-9_\.]+([_\.][rR]\d+)[a-zA-Z0-9_\.]+', file_name)
+    m = re.search('[a-zA-Z0-9_\.]+([_\.][rR]\d+[_\.])[a-zA-Z0-9_\.]+', file_name)
     if (not m is None): return file_name[m.regs[1][0]:m.regs[1][1]].lower().replace('r', '').replace('_', '').replace('.', '')
 
     m = re.search('[a-zA-Z0-9_\.]+([_\.]\d+)[_\.][a-zA-Z0-9_\.]+', file_name)
+    if (not m is None): return file_name[m.regs[1][0]:m.regs[1][1]].lower().replace('_', '').replace('.', '')
+
+    m = re.search('[a-zA-Z0-9_\.]+_(\d+[pP])[_\.][a-zA-Z0-9_\.]+', file_name)
     if (not m is None): return file_name[m.regs[1][0]:m.regs[1][1]].lower().replace('_', '').replace('.', '')
 
     m = re.search('[a-zA-Z0-9_\.]+([_\.]reverse)[a-zA-Z0-9_\.]+', file_name.lower())
