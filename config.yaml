@@ -14,15 +14,24 @@ sample_directory:
   "path/to/my_samples_folder/"
   
 
-#Chose the name of your final csv output file (default="all_samples").
+#Chose the name of your final csv output file (default="all_samples"), and a directory for your results (default="results").
 output_name:
   "all_samples"
 
 
+output_directory:
+  "results/"
+
+
 #Opcionally, especify the tecnologies you are going to analyse (default="any"). If you leave it with the default, all samples of the given folder will be analysed.
-#You opcions are:'fasta','nanopore','illumina_single','illumina_paired','sanger','any'.
+#Your opcions are: 'fasta', 'nanopore','illumina_single','illumina_paired','sanger','any'.
 tecnology:
 - any
+
+
+# If you are going to analyse any multi-fasta files, give a list with the name of each multi-fasta file (default="none"). You can chosse "all" if all of your fasta files are multi-fasta.
+multi_fasta:
+- none
 
 
 #Now you can change some params for your analysis
@@ -48,7 +57,4 @@ startbase:
 #Abiview params: Last sequence base to report or display (default=800).
 endbase:
   800
-
-
-
 

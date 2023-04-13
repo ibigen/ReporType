@@ -8,10 +8,15 @@ import gzip
 import shutil
 import tempfile
 import argparse
+import sys
+
 
 ######################  INPUTS  ###############################
 
 configfile: "config.yaml"
+
+table = "table_configuration.py"  
+
 
 db = config["database"]
 sample_path = config["sample_directory"]
@@ -19,9 +24,11 @@ threads = config["threads"]
 minid=config["minid"]
 mincov=config["mincov"]
 output=config["output_name"]
+output_directory=config["output_directory"]
 tec_input=config["tecnology"]
-
-table = "table_configuration.py"  
+multi_fasta=config["multi_fasta"]
+startbase=config["startbase"]
+endbase=config["endbase"]
 
 ###################### DB INPUT ###############################
 
@@ -73,6 +80,7 @@ if fasta_check == False:
     db_check = db_check(db)
     if db_check == False:
         print("Input error: The database name is incorrect or the given path to fasta file does not exist!")
+        sys.exit()
     else:
         print('Database available! Starting analysis...')
 else:
@@ -102,7 +110,7 @@ else:
 
 FASTA_EXTENSION = [".fasta", ".fasta.gz", ".fa", ".fa.gz", ".fna", ".fna.gz"]
 FASTQ_EXTENSION = [".fastq", ".fastq.gz", ".fq", ".fq.gz"]
-AB1_EXTENSION = [".ab1"]
+AB1_EXTENSION = [".ab1",".ab",".fsa"]
 
 ### size limit of the sequences
 MAX_LENGHT_ILLUMINA_FASQC_SEQ = 500     ## because of IONtorrent
@@ -169,15 +177,15 @@ def remove_extensions_file_name(file_name, vect_to_remove=FASTQ_EXTENSION):
 
 def __get_prefix_file_name(file_name):
     """ returnprefix file name based on patterns """
-    m = re.search('[a-zA-Z0-9_\.]+(_[lL]\d+_[rR]\d+_\d+)_[a-zA-Z0-9_\.]+', file_name)  ##
+    m = re.search('[a-zA-Z0-9_\.]+(_[lL]\d+_[rR]\d+_\d+)_[a-zA-Z0-9_\.]+', file_name)
     if (not m is None): return file_name[:m.regs[1][0]]
-    m = re.search('[a-zA-Z0-9_\.]+(_[lL]\d+_[rR]\d+)[a-zA-Z0-9_\.]+', file_name)  ##
+    m = re.search('[a-zA-Z0-9_\.]+(_[lL]\d+_[rR]\d+)[a-zA-Z0-9_\.]+', file_name)
     if (not m is None): return file_name[:m.regs[1][0]]
     m = re.search('[a-zA-Z0-9_\.]+([_\.][rR]\d+_[lL]\d+)[a-zA-Z0-9_\.]+', file_name)
     if (not m is None): return file_name[:m.regs[1][0]]
-    m = re.search('[a-zA-Z0-9_\.]+(_\d+[pP][_\.])[a-zA-Z0-9_\.]+', file_name)
+    m = re.search('[a-zA-Z0-9_\.]+(_[lL]\d+)[a-zA-Z0-9_\.]+', file_name)
     if (not m is None): return file_name[:m.regs[1][0]]
-    m = re.search('[a-zA-Z0-9_\.]+([_\.][rR]\d)[_\.][a-zA-Z0-9_\.]+', file_name)	##
+    m = re.search('[a-zA-Z0-9_\.]+([_\.][rR]\d)[_\.][a-zA-Z0-9_\.]+', file_name)
     if (not m is None): return file_name[:m.regs[1][0]]
     m = re.search('[a-zA-Z0-9_\.]+([_\.][rR]\d+)[a-zA-Z0-9_\.]+', file_name)
     if (not m is None): return file_name[:m.regs[1][0]]
@@ -198,13 +206,10 @@ def get_number_file(file_name):
     """ return the number of file
     :out None if not found  """
 
-    m = re.search('[a-zA-Z0-9_\.]+([_\.][rR]\d+[_\.])[a-zA-Z0-9_\.]+', file_name)
+    m = re.search('[a-zA-Z0-9_\.]+([_\.][rR]\d+)[a-zA-Z0-9_\.]+', file_name)
     if (not m is None): return file_name[m.regs[1][0]:m.regs[1][1]].lower().replace('r', '').replace('_', '').replace('.', '')
 
     m = re.search('[a-zA-Z0-9_\.]+([_\.]\d+)[_\.][a-zA-Z0-9_\.]+', file_name)
-    if (not m is None): return file_name[m.regs[1][0]:m.regs[1][1]].lower().replace('_', '').replace('.', '')
-
-    m = re.search('[a-zA-Z0-9_\.]+_(\d+[pP])[_\.][a-zA-Z0-9_\.]+', file_name)
     if (not m is None): return file_name[m.regs[1][0]:m.regs[1][1]].lower().replace('_', '').replace('.', '')
 
     m = re.search('[a-zA-Z0-9_\.]+([_\.]reverse)[a-zA-Z0-9_\.]+', file_name.lower())
@@ -342,7 +347,7 @@ if len (list_illumina_fastq_single) > 0:
 
 if len (list_fasta)>0:
     tec_app.append("fasta")
-
+    
 if len (list_fastq_nanopore)>0:
     tec_app.append("nanopore")
 
@@ -357,10 +362,10 @@ for tecnology_input in tec_input:
 ###remove non listed tecnoloogies
 
 if len(tec_input)>0:
-    if "fasta" not in tec_input:
-        list_fasta=[]
     if "nanopore" not in tec_input:
         list_fastq_nanopore=[]
+    if "fasta" not in tec_input:
+        list_fasta=[]
     if "sanger" not in tec_input:
         list_ab1=[]
     if "illumina_single" not in tec_input:
@@ -368,11 +373,13 @@ if len(tec_input)>0:
     if "illumina_paired" not in tec_input:
         dt_fastq_illumina_pair = { 'r1' : [], 'r2' : [] }
 
+         
+
 
 ########################ANALISIS###############################
 rule all:
     input:
-        expand("results/{output}.csv",output=output)
+        expand("{output_directory}{output}.tsv",output=output, output_directory=output_directory)
     params:
         tec_input=tec_input,
         tec_app=tec_app
@@ -400,10 +407,10 @@ if len(dt_fastq_illumina_pair['r1']) > 0:
             r1 = lambda wildcards: dt_extention_r1[wildcards.sample],
             r2 = lambda wildcards: dt_extention_r2[wildcards.sample]
         output:
-            s1="results/intermidiate/trimm_paired_sur_1/{sample}.fastq.gz",
-            d1="results/intermidiate/trimm_paired_rem_1/{sample}.fastq.gz",
-            s2="results/intermidiate/trimm_paired_sur_2/{sample}.fastq.gz",
-            d2="results/intermidiate/trimm_paired_rem_2/{sample}.fastq.gz"
+            s1=expand("{output_directory}intermidiate/trimm_paired_sur_1/{{sample}}.fastq.gz", output_directory=output_directory),
+            d1=expand("{output_directory}intermidiate/trimm_paired_rem_1/{{sample}}.fastq.gz", output_directory=output_directory),
+            s2=expand("{output_directory}intermidiate/trimm_paired_sur_2/{{sample}}.fastq.gz", output_directory=output_directory),
+            d2=expand("{output_directory}intermidiate/trimm_paired_rem_2/{{sample}}.fastq.gz", output_directory=output_directory)
         params:
             threads = threads
         shell:
@@ -411,10 +418,10 @@ if len(dt_fastq_illumina_pair['r1']) > 0:
 
     rule illumina_paired:
         input:
-            r1 ="results/intermidiate/trimm_paired_sur_1/{sample}.fastq.gz",
-            r2 ="results/intermidiate/trimm_paired_sur_2/{sample}.fastq.gz"
+            r1 =expand("{output_directory}intermidiate/trimm_paired_sur_1/{{sample}}.fastq.gz", output_directory=output_directory),
+            r2 =expand("{output_directory}intermidiate/trimm_paired_sur_2/{{sample}}.fastq.gz", output_directory=output_directory)
         output:
-             "results/intermidiate/fasta_files/{sample}.fasta"
+             expand("{output_directory}intermidiate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
         params:
             threads = threads
         shell:
@@ -433,7 +440,7 @@ if len(list_illumina_fastq_single) > 0:
         input:
             r1 = lambda wildcards: dt_extention_single[wildcards.sample]
         output:
-            s1="results/intermidiate/trimm_single_sur_1/{sample}.fastq.gz"
+            s1=expand("{output_directory}intermidiate/trimm_single_sur_1/{{sample}}.fastq.gz", output_directory=output_directory)
         params:
             threads = threads
         shell:
@@ -441,9 +448,9 @@ if len(list_illumina_fastq_single) > 0:
 
     rule illumina_single:
         input:
-            r1 = "results/intermidiate/trimm_single_sur_1/{sample}.fastq.gz"
+            r1 = expand("{output_directory}intermidiate/trimm_single_sur_1/{{sample}}.fastq.gz", output_directory=output_directory)
         output:
-            "results/intermidiate/fasta_files/{sample}.fasta"
+            expand("{output_directory}intermidiate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
         params:
             threads = threads
         shell:
@@ -458,13 +465,14 @@ if len(list_fasta) > 0:
     SAMPLES_NAME_global.extend(remove_extensions_file_name(file_name,FASTA_EXTENSION) for file_name in list_fasta)
 
     dt_extention_fasta_file = {remove_extensions_file_name(os.path.basename(file_name),FASTA_EXTENSION) : list_fasta[index] for index, file_name in enumerate(list_fasta)}
+ 
 
    
     rule fasta:
         input:
             lambda wildcards: dt_extention_fasta_file[wildcards.sample]
         output:
-            "results/intermidiate/fasta_files/{sample}.fasta"
+            expand("{output_directory}intermidiate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
         shell:
             "cp {input} {output}"
 
@@ -480,17 +488,17 @@ if len(list_fastq_nanopore) > 0:
         input:
            lambda wildcards: dt_extention_nano[wildcards.sample]
         output:
-            "results/intermidiate/nanofilt_filtred_files/{sample}.fastq.gz"
+            expand("{output_directory}intermidiate/nanofilt_filtred_files/{{sample}}.fastq.gz", output_directory=output_directory)
         shell:
             """(gunzip -c {input} | NanoFilt -q 8 -l 50 --headcrop 30 --tailcrop 30 --maxlength 50000 | gzip > {output}) || (touch {output} && echo Warning: nanofilt failed, were created empty files)"""
  
 
     rule nanopore:
         input:
-            "results/intermidiate/nanofilt_filtred_files/{sample}.fastq.gz"
+            expand("{output_directory}intermidiate/nanofilt_filtred_files/{{sample}}.fastq.gz", output_directory=output_directory)
         output:
-            gfa = "results/intermidiate/raven_gfa_files/{sample}.fasta",
-            fasta = "results/intermidiate/fasta_files/{sample}.fasta"
+            gfa = expand("{output_directory}intermidiate/raven_gfa_files/{{sample}}.fasta", output_directory=output_directory),
+            fasta = expand("{output_directory}intermidiate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
         params:
             threads=threads
         shell:
@@ -507,7 +515,7 @@ if len(list_ab1) > 0:
         input:
             lambda wildcards: dt_extention_sanger[wildcards.sample]
         output:
-            "results/intermidiate/fasta_files/{sample}.fasta"
+            expand("{output_directory}intermidiate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
         params:
             startbase=startbase,
             endbase=endbase
@@ -518,9 +526,9 @@ if len(list_ab1) > 0:
 
 rule abricate:
     input:
-        "results/intermidiate/fasta_files/{sample}.fasta"
+        expand("{output_directory}intermidiate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
     output:
-        "results/detailed/{sample}.tab"
+        expand("{output_directory}detailed/{{sample}}.tab", output_directory=output_directory)
     params:
         db = db,
         minid=minid,
@@ -531,10 +539,11 @@ rule abricate:
 
 rule table:
     input:
-        expand("results/detailed/{sample}.tab", sample=SAMPLES_NAME_global)
+        expand("{output_directory}detailed/{sample}.tab", sample=SAMPLES_NAME_global,output_directory=output_directory)
     output:
-        expand("results/{output}.csv",output=output)
+        expand("{output_directory}{output}.tsv",output=output, output_directory=output_directory)
+    params:
+        multi=multi_fasta
     script:
         table
-
 
