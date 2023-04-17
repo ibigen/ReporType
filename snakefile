@@ -459,11 +459,11 @@ if len(dt_fastq_illumina_pair['r1']) > 0:
             s2=expand("{output_directory}intermidiate/trimm_paired_sur_2/{{sample}}.fastq.gz", output_directory=output_directory),
             d2=expand("{output_directory}intermidiate/trimm_paired_rem_2/{{sample}}.fastq.gz", output_directory=output_directory)
         params:
-            threads = threads
-            illuminaclip_paired=illuminaclip_paired
-            slidingwindow_paired=slidingwindow_paired
-            minlen_paired=minlen_paired
-            leading_paired=leading_paired
+            threads = threads,
+            illuminaclip_paired=illuminaclip_paired,
+            slidingwindow_paired=slidingwindow_paired,
+            minlen_paired=minlen_paired,
+            leading_paired=leading_paired,
             trailing_paired=trailing_paired            
         shell:
             """trimmomatic PE -threads {params.threads} {input.r1} {input.r2} {output.s1} {output.d1} {output.s2} {output.d2} {params.illuminaclip_paired} {params.slidingwindow_paired} {params.leading_paired} {params.trailing_paired} {params.minlen_paired} || (touch {output.s1} {output.s2} && echo Warning: trimmomatic failed, were created empty files)"""
@@ -494,11 +494,11 @@ if len(list_illumina_fastq_single) > 0:
         output:
             s1=expand("{output_directory}intermidiate/trimm_single_sur_1/{{sample}}.fastq.gz", output_directory=output_directory)
         params:
-            threads = threads
-            illuminaclip_single=illuminaclip_single
-            slidingwindow_single=slidingwindow_single
-            minlen_single=minlen_single
-            leading_single=leading_single
+            threads = threads,
+            illuminaclip_single=illuminaclip_single,
+            slidingwindow_single=slidingwindow_single,
+            minlen_single=minlen_single,
+            leading_single=leading_single,
             trailing_single=trailing_single
         shell:
             """trimmomatic SE -threads {params.threads} {input.r1} {output.s1} {params.illuminaclip_single} {params.slidingwindow_single} {params.leading_single} {params.trailing_single} {params.minlen_single} || (touch {output.s1} && echo Warning: trimmomatic failed, were created empty files)"""
@@ -545,10 +545,10 @@ if len(list_fastq_nanopore) > 0:
         input:
             lambda wildcards: dt_extention_nano[wildcards.sample]
         params:
-            length=length
-            quality=quality
-            maxlength=maxlength
-            headcrop=headcrop
+            length=length,
+            quality=quality,
+            maxlength=maxlength,
+            headcrop=headcrop,
             tailcrop=tailcrop
         output:
             expand("{output_directory}intermidiate/nanofilt_filtred_files/{{sample}}.fastq.gz", output_directory=output_directory)
@@ -563,8 +563,8 @@ if len(list_fastq_nanopore) > 0:
             gfa = expand("{output_directory}intermidiate/raven_gfa_files/{{sample}}.fasta", output_directory=output_directory),
             fasta = expand("{output_directory}intermidiate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
         params:
-            threads=threads
-            kmer=kmer
+            threads=threads,
+            kmer=kmer,
             polishing=polishing
         shell:
             """raven -t {params.threads} -k {params.kmer} -p {params.polishing} {input} --graphical-fragment-assembly {output.gfa} --disable-checkpoints || (touch {output.gfa} && echo Warning: raven failed, were created empty files) ; awk \'/^S/{{ printf(">%s\\n%s\\n", $2, $3) }}\' {output.gfa} > {output.fasta} || touch {output.fasta} """
