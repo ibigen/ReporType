@@ -11,7 +11,7 @@ The main output consists of a .csv file with the sample name, the genes found, c
 It will also produce the detailed Abricate output files and the intermidiate files that are produced by other software (trimmed samples, etc...).
 
 
-![alt text](https://github.com/ibigen/loci_screening_typing/blob/main/images/Illustrative%20scheme.png.png)
+![alt text](https://github.com/ibigen/loci_screening_typing/blob/main/detect_type_work_flow.png)
 
 
 ## Instalation
