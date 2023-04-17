@@ -3,8 +3,18 @@
 #Use this file to give your inputs
 
 #Insert the name of the database for the samples you want to analyse (example: influenza).
-#If is the first time using this databse you need to add the path to the fasta file contining the database, a new database will be created with the name of the given fasta file (example: path/to/my_database.fasta).
+#If is the first time using this databse you need to add the path to the fasta file (seq~~id~~acession) contaning the database, a new database will be created with the name of the given fasta file (example: path/to/my_database.fasta).
 database:
+  "path/to/my_database.fasta"
+  
+#optionally, If you don't have a fasta file already formatted for abricate (seq~~id~~acession), you can give a fasta file only with the sequences and a table (tsv) with sequece, id and acession for each sequence. You should also choose a name and directory for your final fasta file, that will be the name the new database.
+fasta_db:
+  "path/to/sequences.fasta"
+  
+table_db:
+  "path/to/table.tsv"
+  
+final_fasta_db:
   "path/to/my_database.fasta"
 
 
@@ -48,6 +58,74 @@ minid:
 #Minimum DNA %coverage (default=1).
 mincov:
   1
+
+#Illumina cleaning params (you can chosse deferently for single and paired reads)
+#Trimmomatic Illuminaclip: enter the directory of your illumina adapters, as well as specific cleaning informations for your file (default: "ILLUMINACLIP:primers/adapters.fasta:3:30:10:6:true") 
+illuminaclip_single:
+  "ILLUMINACLIP:primers/adapters.fasta:3:30:10:6:true"
+  
+illuminaclip_paired:
+  "ILLUMINACLIP:primers/adapters.fasta:3:30:10:6:true"
+  
+#Trimmomatic Slidingwindow: minimum average quality established for each sequence according to a certain number of bases (default="SLIDINGWINDOW:4:15").
+slidingwindow_single:
+  "SLIDINGWINDOW:4:15"
+  
+slidingwindow_paired:
+  "SLIDINGWINDOW:4:15"
+  
+#Trimmomatic Minlen: minimum read size (default="MINLEN:36").
+minlen_single:
+  "MINLEN:36"
+
+minlen_paired:
+  "MINLEN:36"
+  
+#Trimmomatic Leading: bases to remove at the beginning of the read (default="LEADING:3")
+leading_single:
+  "LEADING:3"
+  
+leading_paired:
+  "LEADING:3"
+  
+#Trimmomatic Trailing: bases to remove at the end of the read (default="TRAILING:3")
+trailing_single:
+  "TRAILING:3"
+
+trailing_paired:
+  "TRAILING:3"
+
+
+#Nanopore params
+#Nanofilt minimum quality: minimum quality mean for read (default=8).
+quality:
+  8
+
+#Nanofilt length: minimun length per read (default=50)
+length:
+  50
+  
+#Nanofilt maxlength: maximum length per read (default=50000)
+maxlength:
+  50000
+
+#Nanofilt headcrop: bases to remove at the beginning of the read (default=30)
+headcrop:
+  30
+  
+#Nanofilt tailcrop: bases to remove at the end of the read (default=30)
+tailcrop:
+  30 
+
+#Raven k-mer: length of minimizers used to find overlaps (default=15)
+kmer:
+  15
+  
+#Raven polishing-rounds: number of times racon is invoked (default=2)
+polishing:
+  2
+  
+  
 
 #Sanger params
 #Abiview params: First base to report or display (default=20).

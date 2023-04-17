@@ -13,24 +13,57 @@ import sys
 
 ######################  INPUTS  ###############################
 
+def string_to_list(str):
+    str=str.replace(' ','')
+    list = str.split(',')
+    return list
+
+
 configfile: "config.yaml"
 
 table = "table_configuration.py"  
 
 
-db = config["database"]
-sample_path = config["sample_directory"]
-threads = config["threads"]
-minid=config["minid"]
-mincov=config["mincov"]
-output=config["output_name"]
-output_directory=config["output_directory"]
-tec_input=config["tecnology"]
-multi_fasta=config["multi_fasta"]
-startbase=config["startbase"]
-endbase=config["endbase"]
+db = str(config["database"])
+sample_path = str(config["sample_directory"])
+threads = int(config["threads"])
+minid=int(config["minid"])
+mincov=int(config["mincov"])
+output=str(config["output_name"])
+output_directory=str(config["output_directory"])
+tec_input=str(config["tecnology"])
+tec_input=string_to_list(tec_input)
+multi_fasta=str(config["multi_fasta"])
+multi_fasta=string_to_list(multi_fasta)
+startbase=int(config["startbase"])
+endbase=int(config["endbase"])
+fasta_db=str(config["fasta_db"])
+table_db=str(config["table_db"])
+final_fasta_db=str(config["final_fasta_db"])
+illuminaclip_single=str(config["illuminaclip_single"])
+illuminaclip_paired=str(config["illuminaclip_paired"])
+slidingwindow_single=str(config["slidingwindow_single"])
+slidingwindow_paired=str(config["slidingwindow_paired"])
+minlen_single=str(config["minlen_single"])
+minlen_paired=str(config["minlen_paired"])
+leading_single=str(config["leading_single"])
+leading_paired=str(config["leading_paired"])
+trailing_single=str(config["trailing_single"])
+trailing_paired=str(config["trailing_paired"])
+quality=int(config["quality"])
+length=int(config["length"])
+maxlength=int(config["maxlength"])
+headcrop=int(config["headcrop"])
+tailcrop=int(config["tailcrop"])
+kmer=int(config["kmer"])
+polishing=int(config["polishing"])
+
+
 
 ###################### DB INPUT ###############################
+
+
+
 
 def path_check(path):
     exist = os.path.exists(path)
@@ -74,33 +107,47 @@ def name_db(path):
     return (name)
 
 
-fasta_check = path_check(db)
-
-if fasta_check == False:
-    db_check = db_check(db)
-    if db_check == False:
-        print("Input error: The database name is incorrect or the given path to fasta file does not exist!")
-        sys.exit()
-    else:
-        print('Database available! Starting analysis...')
-else:
-    fasta_path = fasta_import_to_abricate(db)
-    join = ['"', '"']
-    fasta_path = fasta_path.join(join)
-    db = name_db(fasta_path)
-    check = db_check(db)
-    if check == False:
-        abricate_db = abri_default_db()
-        shell("mkdir {abricate_db}/{db}")
-        shell("cp {fasta_path} {abricate_db}/{db}/sequences")
-        shell("cd {abricate_db}/{db} ; makeblastdb -in sequences -title {db} -dbtype nucl -hash_index")
-        check=db_check(db)
+def main_db(db):
+    fasta_check = path_check(db)
+    if fasta_check == False:
+        check = db_check(db)
         if check == False:
-            print("Input error: Failed creating new database! Check the fasta file and respective path.")
+            print("Input error: The database name is incorrect or the given path to fasta file does not exist!")
+            sys.exit()
         else:
             print('Database available! Starting analysis...')
     else:
-        print('Database available! Starting analysis...')
+        fasta_path = fasta_import_to_abricate(db)
+        join = ['"', '"']
+        fasta_path = fasta_path.join(join)
+        db = name_db(fasta_path)
+        check = db_check(db)
+        if check == False:
+            abricate_db = abri_default_db()
+            shell("mkdir {abricate_db}/{db}")
+            shell("cp {fasta_path} {abricate_db}/{db}/sequences")
+            shell("cd {abricate_db}/{db} ; makeblastdb -in sequences -title {db} -dbtype nucl -hash_index")
+            shell("abricate --setupdb")
+            check=db_check(db)
+            if check == False:
+                print("Input error: Failed creating new database! Check the fasta file and respective path.")
+            else:
+                print('Database available! Starting analysis...')
+        else:
+            print('Database available! Starting analysis...')
+    return(db)
+
+
+if fasta_db=="path/to/sequences.fasta":
+    db=main_db(db)
+else:
+    shell('python "create_abricate_file.py" -f {fasta_db} -s {table_db} -o {final_fasta_db}')
+    db=final_fasta_db
+    db=main_db(db)
+
+    
+
+
 
 
 
@@ -413,8 +460,13 @@ if len(dt_fastq_illumina_pair['r1']) > 0:
             d2=expand("{output_directory}intermidiate/trimm_paired_rem_2/{{sample}}.fastq.gz", output_directory=output_directory)
         params:
             threads = threads
+            illuminaclip_paired=illuminaclip_paired
+            slidingwindow_paired=slidingwindow_paired
+            minlen_paired=minlen_paired
+            leading_paired=leading_paired
+            trailing_paired=trailing_paired            
         shell:
-            """trimmomatic PE -threads {params.threads} {input.r1} {input.r2} {output.s1} {output.d1} {output.s2} {output.d2} ILLUMINACLIP:primers/adapters.fasta:3:30:10:6:true SLIDINGWINDOW:4:15 LEADING:3 TRAILING:3 MINLEN:36 || (touch {output.s1} {output.s2} && echo Warning: trimmomatic failed, were created empty files)"""
+            """trimmomatic PE -threads {params.threads} {input.r1} {input.r2} {output.s1} {output.d1} {output.s2} {output.d2} {params.illuminaclip_paired} {params.slidingwindow_paired} {params.leading_paired} {params.trailing_paired} {params.minlen_paired} || (touch {output.s1} {output.s2} && echo Warning: trimmomatic failed, were created empty files)"""
 
     rule illumina_paired:
         input:
@@ -443,8 +495,13 @@ if len(list_illumina_fastq_single) > 0:
             s1=expand("{output_directory}intermidiate/trimm_single_sur_1/{{sample}}.fastq.gz", output_directory=output_directory)
         params:
             threads = threads
+            illuminaclip_single=illuminaclip_single
+            slidingwindow_single=slidingwindow_single
+            minlen_single=minlen_single
+            leading_single=leading_single
+            trailing_single=trailing_single
         shell:
-            """trimmomatic SE -threads {params.threads} {input.r1} {output.s1} ILLUMINACLIP:primers/adapters.fasta:3:30:10:6:true SLIDINGWINDOW:4:15 LEADING:3 TRAILING:3 MINLEN:36 || (touch {output.s1} && echo Warning: trimmomatic failed, were created empty files)"""
+            """trimmomatic SE -threads {params.threads} {input.r1} {output.s1} {params.illuminaclip_single} {params.slidingwindow_single} {params.leading_single} {params.trailing_single} {params.minlen_single} || (touch {output.s1} && echo Warning: trimmomatic failed, were created empty files)"""
 
     rule illumina_single:
         input:
@@ -486,11 +543,17 @@ if len(list_fastq_nanopore) > 0:
     
     rule pre_nanopore:
         input:
-           lambda wildcards: dt_extention_nano[wildcards.sample]
+            lambda wildcards: dt_extention_nano[wildcards.sample]
+        params:
+            length=length
+            quality=quality
+            maxlength=maxlength
+            headcrop=headcrop
+            tailcrop=tailcrop
         output:
             expand("{output_directory}intermidiate/nanofilt_filtred_files/{{sample}}.fastq.gz", output_directory=output_directory)
         shell:
-            """(gunzip -c {input} | NanoFilt -q 8 -l 50 --headcrop 30 --tailcrop 30 --maxlength 50000 | gzip > {output}) || (touch {output} && echo Warning: nanofilt failed, were created empty files)"""
+            """(gunzip -c {input} | NanoFilt -q {params.quality} -l {params.length} --headcrop {params.headcrop} --tailcrop {params.tailcrop} --maxlength {params.maxlength} | gzip > {output}) || (touch {output} && echo Warning: nanofilt failed, were created empty files)"""
  
 
     rule nanopore:
@@ -501,8 +564,10 @@ if len(list_fastq_nanopore) > 0:
             fasta = expand("{output_directory}intermidiate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
         params:
             threads=threads
+            kmer=kmer
+            polishing=polishing
         shell:
-            """raven -t {params.threads} {input} --graphical-fragment-assembly {output.gfa} --disable-checkpoints || (touch {output.gfa} && echo Warning: raven failed, were created empty files) ; awk \'/^S/{{ printf(">%s\\n%s\\n", $2, $3) }}\' {output.gfa} > {output.fasta} || touch {output.fasta} """
+            """raven -t {params.threads} -k {params.kmer} -p {params.polishing} {input} --graphical-fragment-assembly {output.gfa} --disable-checkpoints || (touch {output.gfa} && echo Warning: raven failed, were created empty files) ; awk \'/^S/{{ printf(">%s\\n%s\\n", $2, $3) }}\' {output.gfa} > {output.fasta} || touch {output.fasta} """
 
 
 if len(list_ab1) > 0:
