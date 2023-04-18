@@ -121,6 +121,7 @@ def main_db(db):
         join = ['"', '"']
         fasta_path = fasta_path.join(join)
         db = name_db(fasta_path)
+        db=db.replace('"','')
         check = db_check(db)
         if check == False:
             abricate_db = abri_default_db()
@@ -611,4 +612,5 @@ rule table:
         multi=multi_fasta
     script:
         table
+
 
