@@ -11,6 +11,7 @@ import argparse
 import sys
 
 
+
 ######################  INPUTS  ###############################
 
 def string_to_list(str):
@@ -602,15 +603,22 @@ rule abricate:
     shell:
         "abricate --db {params.db} --nopath {input} --minid {params.minid} --mincov {params.mincov} > {output}"
 
-
-rule table:
-    input:
-        expand("{output_directory}detailed/{sample}.tab", sample=SAMPLES_NAME_global,output_directory=output_directory)
-    output:
-        expand("{output_directory}{output}.tsv",output=output, output_directory=output_directory)
-    params:
-        multi=multi_fasta
-    script:
-        table
+if len(SAMPLES_NAME_global)==0:
+ 
+    rule no_samples:
+        output:
+            expand("{output_directory}{output}.tsv",output=output, output_directory=output_directory)
+        shell:
+            "touch {output}"
 
 
+else:
+    rule table:
+        input:
+            expand("{output_directory}detailed/{sample}.tab", sample=SAMPLES_NAME_global,output_directory=output_directory)
+        output:
+            expand("{output_directory}{output}.tsv",output=output, output_directory=output_directory)
+        params:
+            multi=multi_fasta        
+        script:
+            table
