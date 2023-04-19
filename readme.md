@@ -32,7 +32,7 @@ For installation, you need to:
 ## Usage
 
 First of all, you need to activate the detect_type environment with the commands:<br>
-`$ alias detect_type="conda activate detect_type && snakemake"`<br>
+`$ alias detect_type="snakemake"`<br>
 `$ conda activate detect_type`<br>
 
 Now you must configure your entery params. You have to options, you can open de "config.yaml" file and fill it with your options you configurate them through the command line.<br>
