@@ -65,7 +65,7 @@ else
 fi
 
 # Testing SPAdes instalation
-if spades.py --version | grep -q "SPAdes genome assembler"; then
+if spades.py --version | grep -q -e "SPAdes genome assembler" -e "SPAdes"; then
     echo "SPAdes installed correctly"
 else
     echo "Error installing SPAdes"
@@ -92,7 +92,5 @@ else
     echo "Error installing NanoFilt"
 fi
 
-echo ""
-echo "To activate the enviroment:"
-echo "$ alias detect_type='conda activate detect_type && snakemake'; conda activate detect_type"
-echo ""
+
+alias detect_type="snakemake"
