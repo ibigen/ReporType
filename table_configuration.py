@@ -112,7 +112,6 @@ for file in FILES:
                 n=len(file["#FILE"])
                 file["#FILE"]=FILE*n
         file=file.drop(columns=["SEQUENCE"])
-        print(file)
         type=file["DATABASE"]
         TYPES=[]
         DBS=[]
