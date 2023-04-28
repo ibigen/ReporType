@@ -90,7 +90,6 @@ for file in FILES:
     file_in_name=file_in_name.strip()
     file_in_name=file_in_name.split("/")[-1]
     file_in_name=file_in_name.replace(".tab","")
-    print(file_in_name)
     mult = check_multi(multi,file_in_name)
     file = pd.read_table(file,header=0,usecols=['#FILE','SEQUENCE','GENE','%COVERAGE','%IDENTITY','DATABASE','ACCESSION'])
     n=len(file)
