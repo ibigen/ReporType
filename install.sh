@@ -17,7 +17,7 @@ echo "Checking instalation..."
 
 # Testing Python instalation
 if python3 --version | grep -q "Python"; then
-    echo "Python correctly"
+    echo "Python installed correctly"
 else
     echo "Error installing Python"
 fi
@@ -93,4 +93,4 @@ else
 fi
 
 
-alias detect_type="snakemake"
+echo 'To activate detect_type run $ alias detect_type="snakemake"; conda activate detect_type'

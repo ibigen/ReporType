@@ -58,7 +58,7 @@ Detect_type optional configuration params includes: <br>
 
 > **output_name**: name of your final csv output file (default: output_name=all_samples)<br>
 > **output_directory**: directory for your results (default: output_directory=results/)<br>
-> **tecnology**: especify the tecnologies you are going to analyse. If you leave it with the default, all samples of the given folder will be analysed. Your opcions are: fasta,nanopore,illumina_single,illumina_paired,sanger, or any. You must separete them with a coma (default: tecnology=any)<br>
+> **input_format**: especify the input format you are going to analyse. If you leave it with the default, all samples of the given folder will be analysed. Your opcions are: fasta,nanopore,illumina_single,illumina_paired,sanger, or any. You must separete them with a coma (default: input_format=any)<br>
 > **multi_fasta**: if you are going to analyse any multi-fasta files, give the name of each multi-fasta file. You can chosse "all" if all of your fasta files are multi-fasta(default: multi_fasta=none).<br>
 > **threads**: threads you which to use (default: threads=2).<br>
 
@@ -110,7 +110,7 @@ If you wish to configurate throug the command line, here are some examples:<br>
 >To run in loci_screening_typing directory:<br>
 `$ detect_type --cores all --config database=my_database sample_directory=path/to/my_samples_folder/`<br>
 >Now with some opcional configuration params:<br>  
-`$ detect_type --cores all --config database=my_database sample_directory=path/to/my_samples_folder/ output_name=all_samples_database tecnology=fasta,illumina_single multi_fasta=multi_fasta_file_1,multi_fasta_file_2 `<br>
+`$ detect_type --cores all --config database=my_database sample_directory=path/to/my_samples_folder/ output_name=all_samples_database input_format=fasta,illumina_single multi_fasta=multi_fasta_file_1,multi_fasta_file_2 `<br>
 
 
 <br>

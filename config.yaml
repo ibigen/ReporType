@@ -2,23 +2,24 @@
 
 #Use this file to give your inputs
 
-#Insert the name of the database for the samples you want to analyse (example: influenza).
-#If is the first time using this databse you need to add the path to the fasta file (seq~~id~~acession) contaning the database, a new database will be created with the name of the given fasta file (example: path/to/my_database.fasta).
+#Insert the name of the database for the samples you want to analyse (example: database=my_database).
+#If is the first time using this databse you need to add the complete path to the fasta file (seq~~~id~~~acession) contaning the database.
+#Every time you enter the complete path, a new database will be created with the name of your fasta file
 database:
   "path/to/my_database.fasta"
   
-#optionally, If you don't have a fasta file already formatted for abricate (seq~~id~~acession), you can give a fasta file only with the sequences and a table (tsv) with sequece, id and acession for each sequence. You should also choose a name and directory for your final fasta file, that will be the name the new database.
+#In case you dont't have a fasta file already formatted for abricate (seq~~~id~~~acession), you can give a fasta file only with the sequences and a table (tsv) with sequece, id and acession for each sequence. 
+#You should write the name of your new database in the "database" variable.
+#Note that you should not alter the following params if your already have a formatted fasta file.
 fasta_db:
   "path/to/sequences.fasta"
   
 table_db:
   "path/to/table.tsv"
-  
-final_fasta_db:
-  "path/to/my_database.fasta"
 
 
-#Insert the path to the folder with the samples you wish to analyse (example:path/to/my_samples_folder/). 
+
+#Insert the complete path to the folder with the samples you wish to analyse (example:path/to/my_samples_folder/). 
 #This folder can contain samples from different technologies, as long as they are all analyzed according to the same database.
 sample_directory:
   "path/to/my_samples_folder/"
@@ -30,18 +31,18 @@ output_name:
 
 
 output_directory:
-  "results/"
+  "results"
 
 
-#Opcionally, especify the tecnologies you are going to analyse (default="any"). If you leave it with the default, all samples of the given folder will be analysed.
+#Opcionally, especify the input format you are going to analyse (default="any"). If you leave it with the default, all samples of the given folder will be analysed.
 #Your opcions are: 'fasta', 'nanopore','illumina_single','illumina_paired','sanger','any'.
-tecnology:
-- any
+input_format:
+  "any"
 
 
-# If you are going to analyse any multi-fasta files, give a list with the name of each multi-fasta file (default="none"). You can chosse "all" if all of your fasta files are multi-fasta.
+# If you are going to analyse any multi-fasta files, give a list with the name of each multi-fasta file, without the extension (default="none"). You can chosse "all" if all of your fasta files are multi-fasta.
 multi_fasta:
-- none
+  "none"
 
 
 #Now you can change some params for your analysis

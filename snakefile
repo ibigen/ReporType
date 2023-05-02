@@ -32,7 +32,7 @@ minid=int(config["minid"])
 mincov=int(config["mincov"])
 output=str(config["output_name"])
 output_directory=str(config["output_directory"])
-tec_input=str(config["tecnology"])
+tec_input=str(config["input_format"])
 tec_input=string_to_list(tec_input)
 multi_fasta=str(config["multi_fasta"])
 multi_fasta=string_to_list(multi_fasta)
@@ -40,7 +40,6 @@ startbase=int(config["startbase"])
 endbase=int(config["endbase"])
 fasta_db=str(config["fasta_db"])
 table_db=str(config["table_db"])
-final_fasta_db=str(config["final_fasta_db"])
 illuminaclip_single=str(config["illuminaclip_single"])
 illuminaclip_paired=str(config["illuminaclip_paired"])
 slidingwindow_single=str(config["slidingwindow_single"])
@@ -133,18 +132,26 @@ def main_db(db):
             check=db_check(db)
             if check == False:
                 print("Input error: Failed creating new database! Check the fasta file and respective path.")
-            else:
+            else:            
                 print('Database available! Starting analysis...')
         else:
-            print('Database available! Starting analysis...')
+            abricate_db = abri_default_db()
+            shell("rm {abricate_db}/{db}/*")
+            shell("cp {fasta_path} {abricate_db}/{db}/sequences")
+            shell("cd {abricate_db}/{db} ; makeblastdb -in sequences -title {db} -dbtype nucl -hash_index")
+            shell("abricate --setupdb")
+            check=db_check(db)
+            if check == False:
+                print("Input error: Failed creating new database! Check the fasta file and respective path.")
+            else:            
+                print('Database available! Starting analysis...')
     return(db)
 
 
 if fasta_db=="path/to/sequences.fasta":
     db=main_db(db)
 else:
-    shell('python "create_abricate_file.py" -f {fasta_db} -s {table_db} -o {final_fasta_db}')
-    db=final_fasta_db
+    shell('python "create_abricate_file.py" -f {fasta_db} -s {table_db} -o {db}')
     db=main_db(db)
 
     
@@ -428,7 +435,7 @@ if len(tec_input)>0:
 ########################ANALISIS###############################
 rule all:
     input:
-        expand("{output_directory}{output}.tsv",output=output, output_directory=output_directory)
+        expand("{output_directory}/{output}.tsv",output=output, output_directory=output_directory)
     params:
         tec_input=tec_input,
         tec_app=tec_app
@@ -456,10 +463,10 @@ if len(dt_fastq_illumina_pair['r1']) > 0:
             r1 = lambda wildcards: dt_extention_r1[wildcards.sample],
             r2 = lambda wildcards: dt_extention_r2[wildcards.sample]
         output:
-            s1=expand("{output_directory}intermidiate/trimm_paired_sur_1/{{sample}}.fastq.gz", output_directory=output_directory),
-            d1=expand("{output_directory}intermidiate/trimm_paired_rem_1/{{sample}}.fastq.gz", output_directory=output_directory),
-            s2=expand("{output_directory}intermidiate/trimm_paired_sur_2/{{sample}}.fastq.gz", output_directory=output_directory),
-            d2=expand("{output_directory}intermidiate/trimm_paired_rem_2/{{sample}}.fastq.gz", output_directory=output_directory)
+            s1=expand("{output_directory}/intermediate/trimm_paired_sur_1/{{sample}}.fastq.gz", output_directory=output_directory),
+            d1=expand("{output_directory}/intermediate/trimm_paired_rem_1/{{sample}}.fastq.gz", output_directory=output_directory),
+            s2=expand("{output_directory}/intermediate/trimm_paired_sur_2/{{sample}}.fastq.gz", output_directory=output_directory),
+            d2=expand("{output_directory}/intermediate/trimm_paired_rem_2/{{sample}}.fastq.gz", output_directory=output_directory)
         params:
             threads = threads,
             illuminaclip_paired=illuminaclip_paired,
@@ -472,15 +479,16 @@ if len(dt_fastq_illumina_pair['r1']) > 0:
 
     rule illumina_paired:
         input:
-            r1 =expand("{output_directory}intermidiate/trimm_paired_sur_1/{{sample}}.fastq.gz", output_directory=output_directory),
-            r2 =expand("{output_directory}intermidiate/trimm_paired_sur_2/{{sample}}.fastq.gz", output_directory=output_directory)
+            r1 =expand("{output_directory}/intermediate/trimm_paired_sur_1/{{sample}}.fastq.gz", output_directory=output_directory),
+            r2 =expand("{output_directory}/intermediate/trimm_paired_sur_2/{{sample}}.fastq.gz", output_directory=output_directory)
         output:
-             expand("{output_directory}intermidiate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
+             expand("{output_directory}/intermediate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
         params:
-            threads = threads
+            threads = threads,
+            out=output_directory
         shell:
-            """spades.py --pe1-1 {input.r1} --pe1-2 {input.r2} --only-assembler -t {params.threads} -o results/intermidiate/spades/{wildcards.sample} ||  echo Warning: spades failed, were created empty files;"""
-            """cp results/intermidiate/spades/{wildcards.sample}/contigs.fasta {output} || touch {output}"""#; rm -rf results/intermidiate/spades/{wildcards.sample}"""
+            """spades.py --pe1-1 {input.r1} --pe1-2 {input.r2} --only-assembler -t {params.threads} -o {params.out}/intermediate/spades/{wildcards.sample} ||  echo Warning: spades failed, were created empty files;"""
+            """cp {params.out}/intermediate/spades/{wildcards.sample}/contigs.fasta {output} || touch {output}"""#; rm -rf results/intermidiate/spades/{wildcards.sample}"""
 
 
 if len(list_illumina_fastq_single) > 0:
@@ -494,7 +502,7 @@ if len(list_illumina_fastq_single) > 0:
         input:
             r1 = lambda wildcards: dt_extention_single[wildcards.sample]
         output:
-            s1=expand("{output_directory}intermidiate/trimm_single_sur_1/{{sample}}.fastq.gz", output_directory=output_directory)
+            s1=expand("{output_directory}/intermediate/trimm_single_sur_1/{{sample}}.fastq.gz", output_directory=output_directory)
         params:
             threads = threads,
             illuminaclip_single=illuminaclip_single,
@@ -507,14 +515,15 @@ if len(list_illumina_fastq_single) > 0:
 
     rule illumina_single:
         input:
-            r1 = expand("{output_directory}intermidiate/trimm_single_sur_1/{{sample}}.fastq.gz", output_directory=output_directory)
+            r1 = expand("{output_directory}/intermediate/trimm_single_sur_1/{{sample}}.fastq.gz", output_directory=output_directory)
         output:
-            expand("{output_directory}intermidiate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
+            expand("{output_directory}/intermediate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
         params:
-            threads = threads
+            threads = threads,
+            out=output_directory
         shell:
-            """spades.py -s {input.r1} --only-assembler -t {params.threads} -o results/intermidiate/spades/{wildcards.sample} || echo Warning: spades failed, were created empty files;"""
-            """cp results/intermidiate/spades/{wildcards.sample}/contigs.fasta {output} || touch {output}"""#; rm -rf results/intermidiate/spades/{wildcards.sample}"""
+            """spades.py -s {input.r1} --only-assembler -t {params.threads} -o {params.out}/intermediate/spades/{wildcards.sample} || echo Warning: spades failed, were created empty files;"""
+            """cp {params.out}/intermediate/spades/{wildcards.sample}/contigs.fasta {output} || touch {output}"""#; rm -rf results/intermidiate/spades/{wildcards.sample}"""
 
 
 if len(list_fasta) > 0:
@@ -531,7 +540,7 @@ if len(list_fasta) > 0:
         input:
             lambda wildcards: dt_extention_fasta_file[wildcards.sample]
         output:
-            expand("{output_directory}intermidiate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
+            expand("{output_directory}/intermediate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
         shell:
             "cp {input} {output}"
 
@@ -553,17 +562,17 @@ if len(list_fastq_nanopore) > 0:
             headcrop=headcrop,
             tailcrop=tailcrop
         output:
-            expand("{output_directory}intermidiate/nanofilt_filtred_files/{{sample}}.fastq.gz", output_directory=output_directory)
+            expand("{output_directory}/intermediate/nanofilt_filtred_files/{{sample}}.fastq.gz", output_directory=output_directory)
         shell:
             """(gunzip -c {input} | NanoFilt -q {params.quality} -l {params.length} --headcrop {params.headcrop} --tailcrop {params.tailcrop} --maxlength {params.maxlength} | gzip > {output}) || (touch {output} && echo Warning: nanofilt failed, were created empty files)"""
  
 
     rule nanopore:
         input:
-            expand("{output_directory}intermidiate/nanofilt_filtred_files/{{sample}}.fastq.gz", output_directory=output_directory)
+            expand("{output_directory}/intermediate/nanofilt_filtred_files/{{sample}}.fastq.gz", output_directory=output_directory)
         output:
-            gfa = expand("{output_directory}intermidiate/raven_gfa_files/{{sample}}.fasta", output_directory=output_directory),
-            fasta = expand("{output_directory}intermidiate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
+            gfa = expand("{output_directory}/intermediate/raven_gfa_files/{{sample}}.fasta", output_directory=output_directory),
+            fasta = expand("{output_directory}/intermediate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
         params:
             threads=threads,
             kmer=kmer,
@@ -582,7 +591,7 @@ if len(list_ab1) > 0:
         input:
             lambda wildcards: dt_extention_sanger[wildcards.sample]
         output:
-            expand("{output_directory}intermidiate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
+            expand("{output_directory}/intermediate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
         params:
             startbase=startbase,
             endbase=endbase
@@ -593,9 +602,9 @@ if len(list_ab1) > 0:
 
 rule abricate:
     input:
-        expand("{output_directory}intermidiate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
+        expand("{output_directory}/intermediate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
     output:
-        expand("{output_directory}detailed/{{sample}}.tab", output_directory=output_directory)
+        expand("{output_directory}/detailed/{{sample}}.tab", output_directory=output_directory)
     params:
         db = db,
         minid=minid,
@@ -607,7 +616,7 @@ if len(SAMPLES_NAME_global)==0:
  
     rule no_samples:
         output:
-            expand("{output_directory}{output}.tsv",output=output, output_directory=output_directory)
+            expand("{output_directory}/{output}.tsv",output=output, output_directory=output_directory)
         shell:
             "touch {output}"
 
@@ -615,10 +624,12 @@ if len(SAMPLES_NAME_global)==0:
 else:
     rule table:
         input:
-            expand("{output_directory}detailed/{sample}.tab", sample=SAMPLES_NAME_global,output_directory=output_directory)
+            expand("{output_directory}/detailed/{sample}.tab", sample=SAMPLES_NAME_global,output_directory=output_directory)
         output:
-            expand("{output_directory}{output}.tsv",output=output, output_directory=output_directory)
+            expand("{output_directory}/{output}.tsv",output=output, output_directory=output_directory)
         params:
             multi=multi_fasta        
         script:
             table
+
+

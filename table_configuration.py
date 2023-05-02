@@ -65,6 +65,8 @@ def check_only_type(database,TYPES):
 def check_multi(multi,file_in_name):
     if file_in_name in multi:
         mult=True
+    elif "all" in multi:
+        mult=True
     else:
         mult=False
     return (mult) 
@@ -177,7 +179,6 @@ for file in FILES:
 final_file=pd.read_csv(file_name, sep='\t',names=['SAMPLE','GENE','COVERAGE(%)','IDENTITY(%)','DATABASE','ACCESSION'])
 
 final_file.to_csv(file_name,header=True, index=False,mode='w')
-
 
 
 
