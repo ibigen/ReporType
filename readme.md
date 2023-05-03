@@ -99,19 +99,46 @@ The optional configuration params also include all the configuration params for 
 > **--configfile**: you can execute detect_type in any directory using this command to specify the directory for the config file of detect_type (example: --configfile path/to/loci_screening_typing/config.yaml).<br>
 
 
-### Command line examples:
+## Execution<br>
 
+Detect_type is run through the command line, here are some examples, from the simplest to the most complex.
+
+### Configuration with config.yaml file
 If you configurate the config.yaml file, you can only run:<br>
 `$ detect_type --cores all `<br>
 
-If you wish to configurate throug the command line, here are some examples:<br>
+### Configuration with command line<br>
 
->To run out of loci_screening_typing directory:<br>
-`$ detect_type --cores all --snakefile path/to/loci_screening_typing/snakefile  --configfile path/to/loci_screening_typing/config.yaml --config database=my_database sample_directory=path/to/my_samples_folder/`<br>
->To run in loci_screening_typing directory:<br>
-`$ detect_type --cores all --config database=my_database sample_directory=path/to/my_samples_folder/`<br>
->Now with some opcional configuration params:<br>  
-`$ detect_type --cores all --config database=my_database sample_directory=path/to/my_samples_folder/ output_name=all_samples_database input_format=fasta,illumina_single multi_fasta=multi_fasta_file_1,multi_fasta_file_2 `<br>
+#### Example 1 - Database already used:<br>
+`$ detect_type --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database`<br>
+
+#### Example 2 - New database with formatted fasta file: <br>
+`$ detect_type --cores all --config sample_directory=path/to/my_samples_folder/ database=path/to/my_database.fasta`<br>
+
+#### Example 3 - New database without formatted fasta file: <br>
+`$ detect_type --cores all --config sample_directory=path/to/my_samples_folder/ database=path/to/my_database.fasta fasta_db=path/to/sequences.fasta table_db=path/to/table.tsv`<br>
+
+#### Example 4 - New database with formatted fasta file: <br>
+`$ detect_type --cores all --config database=path/to/my_database.fasta sample_directory=path/to/my_samples_folder/ `<br>
+
+#### Example 5 - Output params configuration: <br>
+`$ detect_type --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database output_name=all_samples output_directory=results`<br>
+
+#### Example 6 - Input format params configuration <br>
+##### Example 6.1 - You want to analyze all the samples in your folder and you have two multi fasta files:<br>
+`$ detect_type --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database input_format=any multi_fasta=multi_fasta_1,multi_fasta_2`<br>
+
+##### Example 6.2 - You want to analyze all fasta files and samples sequenced with nanopore technology, all your fasta files are multi fasta:<br>
+`$ detect_type --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database input_format=fasta,nanopore multi_fasta=all`<br>
+
+#### Example 7 - Configuration of some analysis parameters: <br>
+`$ detect_type --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database input_format=fasta,nanopore multi_fasta=all minid=1 e mincov=1`<br>
+
+#### Example 8 - To execute a dry run:<br>
+`$ detect_type -np --config sample_directory=path/to/my_samples_folder/ database=my_database`<br>
+
+#### Example 9 - To run detect_type out of instalation directory:<br>
+`$ detect_type --cores all --snakefile path/to/loci_screening_typing/snakefile --configfile path/to/loci_screening_typing/config.yaml –-config sample_directory=path/to/my_samples_folder/ database=my_database`<br>
 
 
 <br>
