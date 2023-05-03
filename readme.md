@@ -14,6 +14,7 @@ It will also produce the detailed Abricate output files and the intermidiate fil
 ![alt text](https://github.com/ibigen/loci_screening_typing/blob/main/detect_type_work_flow.png)
 
 
+
 ## Instalation
 You need to have  [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) installed.
 All the other dependencies will be automatically installed with detect_type.
