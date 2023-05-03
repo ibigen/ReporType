@@ -129,7 +129,7 @@ If you configurate the config.yaml file, you can only run:<br>
 `$ detect_type --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database input_format=fasta,nanopore multi_fasta=all`<br>
 
 #### Example 6 - Configuration of some analysis parameters: <br>
-`$ detect_type --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database input_format=fasta,nanopore multi_fasta=all minid=1 e mincov=1`<br>
+`$ detect_type --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database input_format=fasta,nanopore multi_fasta=all minid=1 mincov=1`<br>
 
 #### Example 7 - To execute a dry run:<br>
 `$ detect_type -np --config sample_directory=path/to/my_samples_folder/ database=my_database`<br>
