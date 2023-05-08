@@ -63,8 +63,6 @@ polishing=int(config["polishing"])
 ###################### DB INPUT ###############################
 
 
-
-
 def path_check(path):
     exist = os.path.exists(path)
     return (exist)
@@ -109,6 +107,7 @@ def name_db(path):
 
 def main_db(db):
     fasta_check = path_check(db)
+
     if fasta_check == False:
         check = db_check(db)
         if check == False:
@@ -360,7 +359,7 @@ def collect_files(*args):
 
     ## test files
     if len(list_fasta) + len(list_fastq_illumina_single) +\
-           (len(dt_fastq_illumina_pair['r1']) * 2) + len(list_fastq_nanopore) == 0:
+           (len(dt_fastq_illumina_pair['r1']) * 2) + len(list_fastq_nanopore) + len(list_ab1)== 0:
         sys.exit("Error, no file founded at '{}' path".format(args[0]))
 
     return list_fasta, list_fastq_illumina_single, dt_fastq_illumina_pair,\
@@ -631,5 +630,4 @@ else:
             multi=multi_fasta        
         script:
             table
-
 
