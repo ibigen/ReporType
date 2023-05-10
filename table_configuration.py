@@ -56,7 +56,7 @@ def check_only_type(database,TYPES):
             unique=True
         else:
             unique=False
-    if database=="ompA":
+    if database=="ompA" or database=="refseqid" or database=="Lp":
         unique=True
     if database=="influenza" or database=="coronavirus":
         unique=False
@@ -75,10 +75,15 @@ def check_multi(multi,file_in_name):
 FILES = snakemake.input
 if len(FILES)==0:
     print("  ERROR: Some error occured during the analysis, verify your samples  ")
-  
+
+
+
 file_name=snakemake.output[0]
 
+
 multi=snakemake.params.multi
+
+
 
 def transform_in_list(obj):
    LIST=[]
@@ -98,12 +103,13 @@ for file in FILES:
     if n == 0:
         file=file.drop(columns=["SEQUENCE"])
         file= pd.DataFrame({'#FILE':[file_in_name],'GENE':["0 genes found (check if there is any warning during the analysis)"],'%COVERAGE':["---"],'%IDENTITY':["---"],'DATABASE':["---"],'ACCESSION':["---"]})
+
         file.to_csv(file_name,sep="\t",header=False, index=False,mode='a')
     else:
         file=file.sort_values(by=['%COVERAGE'], ascending=False)
         if mult == True:
             file=file.drop_duplicates(subset=["GENE","SEQUENCE"])
-            file["#FILE"]=file["SEQUENCE"]  
+            file["#FILE"]=file["SEQUENCE"] 
         else:
             file=file.drop_duplicates(subset="GENE")
             FILE=transform_in_list(file["#FILE"])
@@ -114,6 +120,7 @@ for file in FILES:
                 n=len(file["#FILE"])
                 file["#FILE"]=FILE*n
         file=file.drop(columns=["SEQUENCE"])
+
         type=file["DATABASE"]
         TYPES=[]
         DBS=[]
@@ -173,12 +180,9 @@ for file in FILES:
                     columns['ACCESSION']=[str(acce_type)+str(join)+str(acce_sub)]*n 
                 file=columns.drop_duplicates(subset="#FILE")
                 file.to_csv(file_name,sep="\t",header=False, index=False,mode='a')
-        
+
 
 
 final_file=pd.read_csv(file_name, sep='\t',names=['SAMPLE','GENE','COVERAGE(%)','IDENTITY(%)','DATABASE','ACCESSION'])
 
 final_file.to_csv(file_name,header=True, index=False,mode='w')
-
-
-
