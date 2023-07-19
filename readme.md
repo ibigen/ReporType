@@ -1,12 +1,10 @@
-# Detect_type - RAW VERSION
+# ReportType - RAW VERSION
 
 
-Detect_type is a user-friendly [Snakemake](https://snakemake.readthedocs.io/en/stable/index.html) pipeline that identifies the variant of a given species (virus or bacteria) under study.
+ReportType is a flexible bioinformatics tool, created with [Snakemake](https://snakemake.readthedocs.io/en/stable/index.html), for screening and typing loci in different variants of viruses and bacteria, thus allowing the detection of subspecies of these pathogenic agents. 
 
-This pipeline uses [Abricate](https://github.com/tseemann/abricate) for variant identification and other independent software that prepares samples priviously analysed with illumina, nanopore and sanger technologies, to be analysed by Abricate.
-The other software used are specified in the illustrative scheme.
-
-Detect_type accepts as samples input .fasta, .fastq and .ab1 files, zipped or not, and will also require a database name or database fasta file input. 
+This automatic pipeline uses [Abricate](https://github.com/tseemann/abricate) for genotype detection and other independent software that prepares samples priviously analysed with Illumina, Nanopore and Sanger technologies. The other software used are specified in the illustrative scheme.
+ReportType accepts as samples input .fasta, .fastq and .ab1 files, zipped or not, and will also require a database name or database fasta file input. There are several databases that you can install with ReportType.  
 The main output consists of a .csv file with the sample name, the genes found, coverage and identity percentage, the database used and the accession.
 It will also produce the detailed Abricate output files and the intermidiate files that are produced by other software (trimmed samples, etc...).
 

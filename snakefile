@@ -27,6 +27,8 @@ table = "table_configuration.py"
 
 db = str(config["database"])
 sample_path = str(config["sample_directory"])
+
+
 threads = int(config["threads"])
 minid=int(config["minid"])
 mincov=int(config["mincov"])
@@ -57,8 +59,22 @@ headcrop=int(config["headcrop"])
 tailcrop=int(config["tailcrop"])
 kmer=int(config["kmer"])
 polishing=int(config["polishing"])
+encoding_single=str(config["encoding_single"])
+if encoding_single=="in_file":
+    encoding_single=str()
+else:
+    encoding_single="-"+encoding_single
 
-
+encoding_paired=str(config["encoding_paired"])
+if encoding_paired=="in_file":
+    encoding_paired=str()
+else:
+    encoding_paired="-"+encoding_paired
+sort=str(config["prioritize"])
+if sort=="cov":
+    sort="%COVERAGE"
+elif sort=="id":
+    sort="%IDENTITY"
 
 ###################### DB INPUT ###############################
 
@@ -152,8 +168,7 @@ if fasta_db=="path/to/sequences.fasta":
 else:
     shell('python "create_abricate_file.py" -f {fasta_db} -s {table_db} -o {db}')
     db=main_db(db)
-
-    
+  
 
 
 
@@ -163,7 +178,7 @@ else:
 ############## SAMPLES INPUT ##############################
 
 
-FASTA_EXTENSION = [".fasta", ".fasta.gz", ".fa", ".fa.gz", ".fna", ".fna.gz"]
+FASTA_EXTENSION = [".fasta",".fsta", ".fasta.gz", ".fa", ".fa.gz", ".fna", ".fna.gz", ".fas"]
 FASTQ_EXTENSION = [".fastq", ".fastq.gz", ".fq", ".fq.gz"]
 AB1_EXTENSION = [".ab1",".ab",".fsa"]
 
@@ -379,8 +394,8 @@ else:
     ## test if windows or not and add the back slash to the end
     if os.name == 'nt':
         sample_path += "\\"
-    elif not sample_path.endswith('/'):
-        sample_path += '/'
+   # elif not sample_path.endswith('/'):
+    #    sample_path += '/'
 
     list_fasta, list_illumina_fastq_single, dt_fastq_illumina_pair,\
         list_fastq_nanopore, list_ab1 = collect_files(sample_path)
@@ -428,7 +443,7 @@ if len(tec_input)>0:
     if "illumina_paired" not in tec_input:
         dt_fastq_illumina_pair = { 'r1' : [], 'r2' : [] }
 
-         
+
 
 
 ########################ANALISIS###############################
@@ -440,12 +455,14 @@ rule all:
         tec_app=tec_app
     run:
         for tecnology_input in params.tec_input:
-            if tecnology_input != "any":
-                if tecnology_input not in tec_app:
+            if len(tec_input) > 0:
+                if tecnology_input not in params.tec_app:
                     print("Warning: no files detect for", tecnology_input, "tecnology. Verify if you enter the rigth tecnology.")
         if len (params.tec_input) > 0:
-            if params.tec_app not in params.tec_input:
-                print("Warning: there are samples that are not", ', '.join(tec_input), "files, those samples will not be analysed. Verify if you enter the rigth tecnologies.")
+            for tecnology_app in params.tec_app:
+                if tecnology_app not in params.tec_input:
+                    print("Warning: there are samples that are not", ' or '.join(tec_input), "files, those samples will not be analysed. Verify if you enter the rigth tecnologies.")
+                    break
 
 
 
@@ -472,9 +489,10 @@ if len(dt_fastq_illumina_pair['r1']) > 0:
             slidingwindow_paired=slidingwindow_paired,
             minlen_paired=minlen_paired,
             leading_paired=leading_paired,
-            trailing_paired=trailing_paired            
+            trailing_paired=trailing_paired,    
+            encoding_paired=encoding_paired       
         shell:
-            """trimmomatic PE -threads {params.threads} {input.r1} {input.r2} {output.s1} {output.d1} {output.s2} {output.d2} {params.illuminaclip_paired} {params.slidingwindow_paired} {params.leading_paired} {params.trailing_paired} {params.minlen_paired} || (touch {output.s1} {output.s2} && echo Warning: trimmomatic failed, were created empty files)"""
+            """trimmomatic PE -threads {params.threads} {params.encoding_paired} {input.r1} {input.r2} {output.s1} {output.d1} {output.s2} {output.d2} {params.illuminaclip_paired} {params.slidingwindow_paired} {params.leading_paired} {params.trailing_paired} {params.minlen_paired} || (touch {output.s1} {output.s2} && echo Warning: trimmomatic failed, were created empty files)"""
 
     rule illumina_paired:
         input:
@@ -508,9 +526,10 @@ if len(list_illumina_fastq_single) > 0:
             slidingwindow_single=slidingwindow_single,
             minlen_single=minlen_single,
             leading_single=leading_single,
-            trailing_single=trailing_single
+            trailing_single=trailing_single,
+            encoding_single=encoding_single
         shell:
-            """trimmomatic SE -threads {params.threads} {input.r1} {output.s1} {params.illuminaclip_single} {params.slidingwindow_single} {params.leading_single} {params.trailing_single} {params.minlen_single} || (touch {output.s1} && echo Warning: trimmomatic failed, were created empty files)"""
+            """trimmomatic SE -threads {params.threads} {params.encoding_single} {input.r1} {output.s1} {params.illuminaclip_single} {params.slidingwindow_single} {params.leading_single} {params.trailing_single} {params.minlen_single} || (touch {output.s1} && echo Warning: trimmomatic failed, were created empty files)"""
 
     rule illumina_single:
         input:
@@ -627,7 +646,8 @@ else:
         output:
             expand("{output_directory}/{output}.tsv",output=output, output_directory=output_directory)
         params:
-            multi=multi_fasta        
+            multi=multi_fasta,
+            sort=sort        
         script:
             table
 

@@ -1,23 +1,23 @@
 #!/bin/bash
-echo "Starting detect_type installation!"
+echo "Starting ReportType installation!"
 
 ## remove environment if exist
-if conda env list | grep "^detect_type" >/dev/null 2>&1; then
-    conda remove -n detect_type --all
+if conda env list | grep "^ReportType" >/dev/null 2>&1; then
+    conda remove -n ReportType --all
 fi
 
 ## create a new environment
-conda create -n detect_type python=3.8
+conda create -n ReportType python=3.8
 
 echo "Install softwares in conda..."
-source activate detect_type && pip install -r requirements.txt && conda install -c bioconda -c conda-forge nanofilt --yes && conda install -c bioconda -c conda-forge spades --yes && conda install -c bioconda -c conda-forge abricate=1.0.1 --yes && conda install -c bioconda -c conda-forge raven-assembler trimmomatic emboss --yes
+source activate ReportType && pip install -r requirements.txt && conda install -c bioconda -c conda-forge nanofilt --yes && conda install -c bioconda -c conda-forge spades --yes && conda install -c bioconda -c conda-forge abricate=1.0.1 --yes && conda install -c bioconda -c conda-forge raven-assembler trimmomatic emboss --yes
 
 ################
 echo "Checking instalation..."
 
 # Testing Python instalation
 if python3 --version | grep -q "Python"; then
-    echo "Python installed correctly"
+    echo "Python correctly"
 else
     echo "Error installing Python"
 fi
@@ -92,5 +92,5 @@ else
     echo "Error installing NanoFilt"
 fi
 
-
-echo 'To activate detect_type run $ alias detect_type="snakemake"; conda activate detect_type'
+echo "To activate ReportType run:"
+echo "$ alias ReportType='conda activate ReportType && snakemake'; conda activate ReportType"

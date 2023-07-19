@@ -1,6 +1,8 @@
-############## Detec_type CONFIG ##################
+############## ReportType config ##################
 
-#Use this file to give your inputs
+
+
+#Use this file to configure your analysis
 
 #Insert the name of the database for the samples you want to analyse (example: database=my_database).
 #If is the first time using this databse you need to add the complete path to the fasta file (seq~~~id~~~acession) contaning the database.
@@ -18,8 +20,7 @@ table_db:
   "path/to/table.tsv"
 
 
-
-#Insert the complete path to the folder with the samples you wish to analyse (example:path/to/my_samples_folder/). 
+#Insert the path to the folder with the samples you wish to analyse (example:path/to/my_samples_folder/). 
 #This folder can contain samples from different technologies, as long as they are all analyzed according to the same database.
 sample_directory:
   "path/to/my_samples_folder/"
@@ -40,16 +41,19 @@ input_format:
   "any"
 
 
-# If you are going to analyse any multi-fasta files, give a list with the name of each multi-fasta file, without the extension (default="none"). You can chosse "all" if all of your fasta files are multi-fasta.
+# If you are going to analyse any multi-fasta files, give a list with the name of each multi-fasta file (default="none"). You can chosse "all" if all of your fasta files are multi-fasta.
 multi_fasta:
   "none"
 
 
-#Now you can change some params for your analysis
 #Choose how many threads you which to use (default=2).
 threads:
   2
 
+#At last, you can choose if, in case there is more than one gene detected, you want to prioritize greater coverage or greater identity (defoult:"cov")
+#Your opcions are: 'cov', 'id'
+prioritize:
+  "cov" 
 
 #Abricate params
 #Minimum DNA %identity (default=1).
@@ -68,12 +72,12 @@ illuminaclip_single:
 illuminaclip_paired:
   "ILLUMINACLIP:primers/adapters.fasta:3:30:10:6:true"
   
-#Trimmomatic Slidingwindow: minimum average quality established for each sequence according to a certain number of bases (default="SLIDINGWINDOW:4:15").
+#Trimmomatic Slidingwindow: minimum average quality established for each sequence according to a certain number of bases (default="SLIDINGWINDOW:5:20").
 slidingwindow_single:
-  "SLIDINGWINDOW:4:15"
+  "SLIDINGWINDOW:5:20"
   
 slidingwindow_paired:
-  "SLIDINGWINDOW:4:15"
+  "SLIDINGWINDOW:5:20"
   
 #Trimmomatic Minlen: minimum read size (default="MINLEN:36").
 minlen_single:
@@ -96,6 +100,13 @@ trailing_single:
 trailing_paired:
   "TRAILING:3"
 
+#Trimmomatic encoding: if quality encoding is not specified in fastq file, specify where (default=in_file)
+#Your options are 'phred33', 'phred64', 'in_file'
+encoding_single: 
+  "in_file"
+
+encoding_paired:
+  "in_file"
 
 #Nanopore params
 #Nanofilt minimum quality: minimum quality mean for read (default=8).
@@ -136,4 +147,7 @@ startbase:
 #Abiview params: Last sequence base to report or display (default=800).
 endbase:
   800
+
+
+
 
