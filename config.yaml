@@ -10,7 +10,7 @@
 database:
   "path/to/my_database.fasta"
   
-#In case you dont't have a fasta file already formatted for abricate (seq~~~id~~~acession), you can give a fasta file only with the sequences and a table (tsv) with sequece, id and acession for each sequence. 
+#In case you dont't have a fasta file already formatted for abricate (seq~~~gene~~~acession), you can give a fasta file only with the sequences and a table (tsv) with sequece, id and acession for each sequence. 
 #You should write the name of your new database in the "database" variable.
 #Note that you should not alter the following params if your already have a formatted fasta file.
 fasta_db:
