@@ -1,12 +1,12 @@
 # ReportType - RAW VERSION
 
 
-ReportType is a flexible bioinformatics tool, created with [Snakemake](https://snakemake.readthedocs.io/en/stable/index.html), for screening and typing loci in different variants of viruses and bacteria, thus allowing the detection of subspecies of these pathogenic agents. 
+ReportType is automatic pipeline, created with [Snakemake](https://snakemake.readthedocs.io/en/stable/index.html), for screening and typing loci in different variants of viruses and bacteria, thus allowing the detection of subspecies of these pathogenic agents. 
 
-This automatic pipeline uses [Abricate](https://github.com/tseemann/abricate) for genotype detection and other independent software that prepares samples priviously analysed with Illumina, Nanopore and Sanger technologies. The other software used are specified in the illustrative scheme.
-ReportType accepts as samples input .fasta, .fastq and .ab1 files, zipped or not, and will also require a database name or database fasta file input. There are several databases that you can install with ReportType.  
-The main output consists of a .csv file with the sample name, the genes found, coverage and identity percentage, the database used and the accession.
-It will also produce the detailed Abricate output files and the intermidiate files that are produced by other software (trimmed samples, etc...).
+This flexible and easy-to-use bioinformatics tool, that uses [ABRicate](https://github.com/tseemann/abricate) to analyse raw data from the sequencing technologies Sanger, Illumina and Nanopore, or fasta files with previously processed contigs, and automatically identifies the genotypes present in the samples under analysis, noting subspecies or strains of different viruses and bacteria. Other software are used to prepare the raw data to be analsed by ABRicate, those are represented in the illustrative scheme.
+
+ReportType comes with several databases already built-in, but allows you to create your own database, instructions below. You can also change several analysis parameters, as well as modify parameters of each software used.
+The final report consists of a document in table format containing the most relevant results for the analysis of the genotypes found, such as sample name, genes found, coverage and percentage of identity, the database used and access. You will also be able to access detailed ABRIcate output files and intermediate files that are produced by other software (clipped samples, fasta files, etc...).
 
 
 ![alt text](https://github.com/ibigen/loci_screening_typing/blob/main/detect_type_workflow.png)
@@ -27,7 +27,10 @@ For installation, you need to:
 `$ chmod +x install.sh`<br>
 `$ ./install.sh`<br>
 
-
+### Databases instalation
+Install running:<br>
+`$ chmod +x databases_install.sh`<br>
+`$ ./databases_install.sh`<br>
 ## Usage
 
 First of all, you need to activate the detect_type environment with the commands:<br>
@@ -40,20 +43,24 @@ There are some mandatory params for configuration listed below. <br>
 
 **Database input params:** <br>
 
-If you have already created a database or have a formatated fasta file with your database:<br>
-> **database**: name of the database you wish to use. If is the first time using this database you need to add the path to the fasta file contaning the database, a new database will be created with the name of the given fasta file (example: database=path/to/my_database.fasta or database=my_database).<br>
+If you have already install the incorporated databases or created your own: <br>
+> **database**: name of the database you wish to use (example: database=my_database).<br>
+ 
+If is the first time using a new database you need to add the path to the formated fasta file (```seq~~~id~~~acession```) contaning the database, a new database will be created with the name of the given fasta file:<br>
+> **database**: path to fasta file for new database (example: database=path/to/my_database.fasta).<br>
 
-If you don't have a database file already formatated for abricate, you can provide two files and the final location of your database fasta file:<br>
+
+If you don't have a database file already formatated for abricate, you can provide two files to crate a new database:<br>
+Note that, in this case, you should write the name of your new database in the "database" variable.
 > **fasta_db**: fasta file with the sequences for your database (example: fasta_db=path/to/sequences.fasta).<br>
-> **table_db**:  table (tsv) with sequece, id and acession for each sequence (example table_db=path/to/table.tsv)
-> **final_fasta_db**: path to your final database fasta file, new database will be created with the name of the given fasta file (example: final_fasta_bd=path/to/my_database.fasta) <br>
-
+> **table_db**:  table (tsv) with sequece, id and acession for each sequence (example table_db=path/to/table.tsv)<br>
+> **database**: name of the database you wish to create (example: database=my_database).<br>
 
 **Samples params:** <br>
 
 > **sample_directory**: path to the folder with the samples you wish to analyse. This folder can contain samples from different technologies, as long as they are all analyzed according to the same database (example: sample_directory=path/to/my_samples_folder/).<br>
 
-Detect_type optional configuration params includes: <br>
+ReportType optional configuration params includes: <br>
 
 > **output_name**: name of your final csv output file (default: output_name=all_samples)<br>
 > **output_directory**: directory for your results (default: output_directory=results/)<br>
@@ -92,62 +99,62 @@ You can also specify some software params.<br>
 The optional configuration params also include all the configuration params for Snakemake, that can be consulted [here](https://snakemake.readthedocs.io/en/v5.1.4/executable.html). The most relevant Snakemake executable params are: <br>
 > **--cores**: number of CPU to be used, it is mandatory (example: --cores all).<br>
 > **-np**: dry-run to verify the jobs you are submiting. <br>
-> **--config**: you must use this command before configurate the detect_type params previosly refered (example: --config database=my_database).<br>
-> **--snakefile**: you can execute detect_type in any directory using this command to specify the directory for the snakefile of detect_type (example: --snakefile path/to/loci_screening_typing/snakefile).<br> 
-> **--configfile**: you can execute detect_type in any directory using this command to specify the directory for the config file of detect_type (example: --configfile path/to/loci_screening_typing/config.yaml).<br>
+> **--config**: you must use this command before configurate the ReportType params previosly refered (example: --config database=my_database).<br>
+> **--snakefile**: you can execute ReportType in any directory using this command to specify the directory for the snakefile of ReportType (example: --snakefile path/to/loci_screening_typing/snakefile).<br> 
+> **--configfile**: you can execute ReportType in any directory using this command to specify the directory for the config file of ReportType (example: --configfile path/to/loci_screening_typing/config.yaml).<br>
 
 
 ## Execution<br>
 
-Detect_type is run through the command line, here are some examples, from the simplest to the most complex.
+ReportType is run through the command line, here are some examples, from the simplest to the most complex.
 
 ### Configuration with config.yaml file
 If you configurate the config.yaml file, you can only run:<br>
-`$ detect_type --cores all `<br>
+`$ ReportType --cores all `<br>
 
 ### Configuration with command line<br>
 
-#### Example 1 - Database already used:<br>
-`$ detect_type --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database`<br>
+#### Example 1 - Database already used or previosly installed:<br>
+`$ ReportType --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database`<br>
 
 #### Example 2 - New database with formatted fasta file: <br>
-`$ detect_type --cores all --config sample_directory=path/to/my_samples_folder/ database=path/to/my_database.fasta`<br>
+`$ ReportType --cores all --config sample_directory=path/to/my_samples_folder/ database=path/to/my_database.fasta`<br>
 
 #### Example 3 - New database without formatted fasta file: <br>
-`$ detect_type --cores all --config sample_directory=path/to/my_samples_folder/ database=path/to/my_database.fasta fasta_db=path/to/sequences.fasta table_db=path/to/table.tsv`<br>
+`$ ReportType --cores all --config sample_directory=path/to/my_samples_folder/ database=path/to/my_database.fasta fasta_db=path/to/sequences.fasta table_db=path/to/table.tsv`<br>
 
 #### Example 4 - Output params configuration: <br>
-`$ detect_type --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database output_name=all_samples output_directory=results`<br>
+`$ ReportType --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database output_name=all_samples output_directory=results`<br>
 
 #### Example 5 - Input format params configuration <br>
 ##### Example 5.1 - You want to analyze all the samples in your folder and you have two multi fasta files:<br>
-`$ detect_type --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database input_format=any multi_fasta=multi_fasta_1,multi_fasta_2`<br>
+`$ ReportType --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database input_format=any multi_fasta=multi_fasta_1,multi_fasta_2`<br>
 
 ##### Example 5.2 - You want to analyze all fasta files and samples sequenced with nanopore technology, all your fasta files are multi fasta:<br>
-`$ detect_type --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database input_format=fasta,nanopore multi_fasta=all`<br>
+`$ ReportType --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database input_format=fasta,nanopore multi_fasta=all`<br>
 
 #### Example 6 - Configuration of some analysis parameters: <br>
-`$ detect_type --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database input_format=fasta,nanopore multi_fasta=all minid=1 mincov=1`<br>
+`$ ReportType --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database input_format=fasta,nanopore multi_fasta=all minid=1 mincov=1`<br>
 
 #### Example 7 - To execute a dry run:<br>
-`$ detect_type -np --config sample_directory=path/to/my_samples_folder/ database=my_database`<br>
+`$ ReportType -np --config sample_directory=path/to/my_samples_folder/ database=my_database`<br>
 
-#### Example 8 - To run detect_type out of instalation directory:<br>
-`$ detect_type --cores all --snakefile path/to/loci_screening_typing/snakefile --configfile path/to/loci_screening_typing/config.yaml –-config sample_directory=path/to/my_samples_folder/ database=my_database`<br>
+#### Example 8 - To run ReportType out of instalation directory:<br>
+`$ ReportType --cores all --snakefile path/to/loci_screening_typing/snakefile --configfile path/to/loci_screening_typing/config.yaml –-config sample_directory=path/to/my_samples_folder/ database=my_database`<br>
 
 
 <br>
 <br>
 
 
-When you are donne using detect_type you can deactivate the environment with:<br>
-`$ conda deactivate detect_type`<br>
+When you are donne using ReportType you can deactivate the environment with:<br>
+`$ conda deactivate ReportType`<br>
 
 
 ## Uninstall
 
-To uninstall detect_type, you need to delete the conda environment with: <br>
-`$ conda env remove --name detect_type`<br>
+To uninstall ReportType, you need to delete the conda environment with: <br>
+`$ conda env remove --name ReportType`<br>
 
 ## Citation
 
