@@ -1,16 +1,16 @@
 #!/bin/bash
-echo "Starting ReportType installation!"
+echo "Starting ReporType installation!"
 
 ## remove environment if exist
-if conda env list | grep "^ReportType" >/dev/null 2>&1; then
-    conda remove -n ReportType --all
+if conda env list | grep "^ReporType" >/dev/null 2>&1; then
+    conda remove -n ReporType --all
 fi
 
 ## create a new environment
-conda create -n ReportType python=3.8
+conda create -n ReporType python=3.8
 
 echo "Install softwares in conda..."
-source activate ReportType && pip install -r requirements.txt && conda install -c bioconda -c conda-forge nanofilt --yes && conda install -c bioconda -c conda-forge spades --yes && conda install -c bioconda -c conda-forge abricate=1.0.1 --yes && conda install -c bioconda -c conda-forge raven-assembler trimmomatic emboss --yes
+source activate ReporType && pip install -r requirements.txt && conda install -c bioconda -c conda-forge nanofilt --yes && conda install -c bioconda -c conda-forge spades --yes && conda install -c bioconda -c conda-forge abricate=1.0.1 --yes && conda install -c bioconda -c conda-forge raven-assembler trimmomatic emboss --yes
 
 ################
 echo "Checking instalation..."
@@ -92,5 +92,5 @@ else
     echo "Error installing NanoFilt"
 fi
 
-echo "To activate ReportType run:"
-echo "$ alias ReportType='conda activate ReportType && snakemake'; conda activate ReportType"
+echo "To activate ReporType run:"
+echo "$ alias ReporType='conda activate ReporType && snakemake'; conda activate ReporType"
