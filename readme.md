@@ -15,7 +15,7 @@ The final report consists of a document in table format containing the most rele
 
 ## Instalation
 You need to have  [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) installed.
-All the other dependencies will be automatically installed with detect_type.
+All the other dependencies will be automatically installed with ReporType.
 For installation, you need to:
 
 
@@ -28,14 +28,19 @@ For installation, you need to:
 `$ ./install.sh`<br>
 
 ### Databases instalation
-Install running:<br>
+
+Before installing the databases, it is necessary to activate the conda environment created for ReporType to work. You can activate the environment with the activation command: <br>
+
+`$ alias ReporType='conda activate ReporType && snakemake'; conda activate ReporType`<br>
+
+Then install the databases running:<br>
 `$ chmod +x databases_install.sh`<br>
 `$ ./databases_install.sh`<br>
 ## Usage
 
-First of all, you need to activate the detect_type environment with the commands:<br>
-`$ alias detect_type="snakemake"`<br>
-`$ conda activate detect_type`<br>
+First of all, you need to activate the ReporType environment with the command:<br>
+`$ alias ReporType='conda activate ReporType && snakemake'; conda activate ReporType`<br>
+
 
 Now you must configure your entery params. You have to options, you can open de "config.yaml" file and fill it with your options you configurate them through the command line.<br>
 
