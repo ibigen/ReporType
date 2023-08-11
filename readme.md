@@ -1,15 +1,15 @@
-# ReportType - RAW VERSION
+# ReporType - RAW VERSION
 
 
-ReportType is automatic pipeline, created with [Snakemake](https://snakemake.readthedocs.io/en/stable/index.html), for screening and typing loci in different variants of viruses and bacteria, thus allowing the detection of subspecies of these pathogenic agents. 
+ReporType is an automatic pipeline, created with [Snakemake](https://snakemake.readthedocs.io/en/stable/index.html), for screening and typing loci in different variants of viruses and bacteria, thus allowing the detection of subspecies of these pathogenic agents. 
 
 This flexible and easy-to-use bioinformatics tool, that uses [ABRicate](https://github.com/tseemann/abricate) to analyse raw data from the sequencing technologies Sanger, Illumina and Nanopore, or fasta files with previously processed contigs, and automatically identifies the genotypes present in the samples under analysis, noting subspecies or strains of different viruses and bacteria. Other software are used to prepare the raw data to be analsed by ABRicate, those are represented in the illustrative scheme.
 
-ReportType comes with several databases already built-in, but allows you to create your own database, instructions below. You can also change several analysis parameters, as well as modify parameters of each software used.
+ReporType comes with several databases already built-in, but allows you to create your own database, instructions below. You can also change several analysis parameters, as well as modify parameters of each software used.
 The final report consists of a document in table format containing the most relevant results for the analysis of the genotypes found, such as sample name, genes found, coverage and percentage of identity, the database used and access. You will also be able to access detailed ABRIcate output files and intermediate files that are produced by other software (clipped samples, fasta files, etc...).
 
 
-![alt text](https://github.com/ibigen/loci_screening_typing/blob/main/detect_type_workflow.png)
+![alt text](https://github.com/ibigen/loci_screening_typing/blob/main/ReporType_workflow.png)
 
 
 
@@ -60,7 +60,9 @@ Note that, in this case, you should write the name of your new database in the "
 
 > **sample_directory**: path to the folder with the samples you wish to analyse. This folder can contain samples from different technologies, as long as they are all analyzed according to the same database (example: sample_directory=path/to/my_samples_folder/).<br>
 
-ReportType optional configuration params includes: <br>
+> **sample_name**: if you wish to analyse only one sample you must give the sample name, you can provide a list of samples (default=all). Note that in paired end sequences, you must give the sample name without any prefixes.<br>
+
+ReporType optional configuration params includes: <br>
 
 > **output_name**: name of your final csv output file (default: output_name=all_samples)<br>
 > **output_directory**: directory for your results (default: output_directory=results/)<br>
@@ -99,62 +101,60 @@ You can also specify some software params.<br>
 The optional configuration params also include all the configuration params for Snakemake, that can be consulted [here](https://snakemake.readthedocs.io/en/v5.1.4/executable.html). The most relevant Snakemake executable params are: <br>
 > **--cores**: number of CPU to be used, it is mandatory (example: --cores all).<br>
 > **-np**: dry-run to verify the jobs you are submiting. <br>
-> **--config**: you must use this command before configurate the ReportType params previosly refered (example: --config database=my_database).<br>
-> **--snakefile**: you can execute ReportType in any directory using this command to specify the directory for the snakefile of ReportType (example: --snakefile path/to/loci_screening_typing/snakefile).<br> 
-> **--configfile**: you can execute ReportType in any directory using this command to specify the directory for the config file of ReportType (example: --configfile path/to/loci_screening_typing/config.yaml).<br>
+> **--config**: you must use this command before configurate the ReporType params previosly refered (example: --config database=my_database).<br>
+> **--snakefile**: you can execute ReporType in any directory using this command to specify the directory for the snakefile of ReporType (example: --snakefile path/to/loci_screening_typing/snakefile).<br> 
+> **--configfile**: you can execute ReporType in any directory using this command to specify the directory for the config file of ReporType (example: --configfile path/to/loci_screening_typing/config.yaml).<br>
 
 
 ## Execution<br>
 
-ReportType is run through the command line, here are some examples, from the simplest to the most complex.
+ReporType is run through the command line, here are some examples, from the simplest to the most complex.
 
 ### Configuration with config.yaml file
 If you configurate the config.yaml file, you can only run:<br>
-`$ ReportType --cores all `<br>
+`$ ReporType --cores all `<br>
 
 ### Configuration with command line<br>
 
 #### Example 1 - Database already used or previosly installed:<br>
-`$ ReportType --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database`<br>
+`$ ReporType --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database`<br>
 
 #### Example 2 - New database with formatted fasta file: <br>
-`$ ReportType --cores all --config sample_directory=path/to/my_samples_folder/ database=path/to/my_database.fasta`<br>
+`$ ReporType --cores all --config sample_directory=path/to/my_samples_folder/ database=path/to/my_database.fasta`<br>
 
 #### Example 3 - New database without formatted fasta file: <br>
-`$ ReportType --cores all --config sample_directory=path/to/my_samples_folder/ database=path/to/my_database.fasta fasta_db=path/to/sequences.fasta table_db=path/to/table.tsv`<br>
+`$ ReporType --cores all --config sample_directory=path/to/my_samples_folder/ database=path/to/my_database.fasta fasta_db=path/to/sequences.fasta table_db=path/to/table.tsv`<br>
 
 #### Example 4 - Output params configuration: <br>
-`$ ReportType --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database output_name=all_samples output_directory=results`<br>
+`$ ReporType --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database output_name=all_samples output_directory=results`<br>
 
 #### Example 5 - Input format params configuration <br>
 ##### Example 5.1 - You want to analyze all the samples in your folder and you have two multi fasta files:<br>
-`$ ReportType --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database input_format=any multi_fasta=multi_fasta_1,multi_fasta_2`<br>
+`$ ReporType --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database input_format=any multi_fasta=multi_fasta_1,multi_fasta_2`<br>
 
 ##### Example 5.2 - You want to analyze all fasta files and samples sequenced with nanopore technology, all your fasta files are multi fasta:<br>
-`$ ReportType --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database input_format=fasta,nanopore multi_fasta=all`<br>
+`$ ReporType --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database input_format=fasta,nanopore multi_fasta=all`<br>
 
 #### Example 6 - Configuration of some analysis parameters: <br>
-`$ ReportType --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database input_format=fasta,nanopore multi_fasta=all minid=1 mincov=1`<br>
+`$ ReporType --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database input_format=fasta,nanopore multi_fasta=all minid=1 mincov=1`<br>
 
 #### Example 7 - To execute a dry run:<br>
-`$ ReportType -np --config sample_directory=path/to/my_samples_folder/ database=my_database`<br>
+`$ ReporType -np --config sample_directory=path/to/my_samples_folder/ database=my_database`<br>
 
-#### Example 8 - To run ReportType out of instalation directory:<br>
-`$ ReportType --cores all --snakefile path/to/loci_screening_typing/snakefile --configfile path/to/loci_screening_typing/config.yaml –-config sample_directory=path/to/my_samples_folder/ database=my_database`<br>
+#### Example 8 - To run ReporType out of instalation directory:<br>
+`$ ReporType --cores all --snakefile path/to/loci_screening_typing/snakefile --configfile path/to/loci_screening_typing/config.yaml –-config sample_directory=path/to/my_samples_folder/ database=my_database`<br>
 
 
 <br>
 <br>
 
 
-When you are donne using ReportType you can deactivate the environment with:<br>
-`$ conda deactivate ReportType`<br>
+When you are donne using ReporType you can deactivate the environment with:<br>
+`$ conda deactivate ReporType`<br>
 
 
 ## Uninstall
 
-To uninstall ReportType, you need to delete the conda environment with: <br>
-`$ conda env remove --name ReportType`<br>
-
-## Citation
+To uninstall ReporType, you need to delete the conda environment with: <br>
+`$ conda env remove --name ReporType`<br>
 

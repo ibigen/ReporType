@@ -60,6 +60,10 @@ tailcrop=int(config["tailcrop"])
 kmer=int(config["kmer"])
 polishing=int(config["polishing"])
 encoding_single=str(config["encoding_single"])
+sample_name=str(config["sample_name"])
+sample_name=string_to_list(sample_name)
+
+
 if encoding_single=="in_file":
     encoding_single=str()
 else:
@@ -446,6 +450,7 @@ if len(tec_input)>0:
 
 
 
+
 ########################ANALISIS###############################
 rule all:
     input:
@@ -463,6 +468,7 @@ rule all:
                 if tecnology_app not in params.tec_input:
                     print("Warning: there are samples that are not", ' or '.join(tec_input), "files, those samples will not be analysed. Verify if you enter the rigth tecnologies.")
                     break
+        
 
 
 
@@ -629,6 +635,10 @@ rule abricate:
         mincov=mincov
     shell:
         "abricate --db {params.db} --nopath {input} --minid {params.minid} --mincov {params.mincov} > {output}"
+
+if sample_name!=["all"]:
+    SAMPLES_NAME_global=sample_name
+
 
 if len(SAMPLES_NAME_global)==0:
  

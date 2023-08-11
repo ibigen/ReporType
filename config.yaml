@@ -25,7 +25,10 @@ table_db:
 sample_directory:
   "path/to/my_samples_folder/"
   
-
+#If you wish to analyse only one sample you must give the sample name, you can provide a list of samples (default=all). Note that in paired end sequences, you must give the sample name without any prefixes.
+sample_name:
+  "all"
+  
 #Chose the name of your final csv output file (default="all_samples"), and a directory for your results (default="results").
 output_name:
   "all_samples"

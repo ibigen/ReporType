@@ -249,26 +249,46 @@ if final_file['DATABASE'][0] != "influenza":
 
 
     final_file = final_file.drop_duplicates(subset='SAMPLE')
+    
 
     final_file['COVERAGE(%)'] = final_file.apply(lambda row: f"{row['GENE'].split(',')[0]}-{row['COVERAGE(%)'].split(',')[0]}; other genes: {', '.join(f'{a}-{b}' for a, b in zip(row['GENE'].split(',')[1:], row['COVERAGE(%)'].split(',')[1:]))}" if len(row['GENE'].split(',')) > 1 else f"{row['GENE']}-{row['COVERAGE(%)']}", axis=1)
 
     final_file['ACCESSION'] = final_file.apply(lambda row: f"{row['GENE'].split(',')[0]}-{row['ACCESSION'].split(',')[0]}; other genes: {', '.join(f'{a}-{b}' for a, b in zip(row['GENE'].split(',')[1:], row['ACCESSION'].split(',')[1:]))}" if len(row['GENE'].split(',')) > 1 else f"{row['GENE']}-{row['ACCESSION']}", axis=1)
 
     final_file['IDENTITY(%)'] = final_file.apply(lambda row: f"{row['GENE'].split(',')[0]}-{row['IDENTITY(%)'].split(',')[0]}; other genes: {', '.join(f'{a}-{b}' for a, b in zip(row['GENE'].split(',')[1:], row['IDENTITY(%)'].split(',')[1:]))}" if len(row['GENE'].split(',')) > 1 else f"{row['GENE']}-{row['IDENTITY(%)']}", axis=1)
-
+    
+    
 
     final_file['GENE'] = final_file.apply(lambda row: f"{str(row['GENE']).split(',')[0]}; other genes: {', '.join(str(x) for x in str(row['GENE']).split(',')[1:])}" if len(str(row['GENE']).split(',')) > 1 else str(row['GENE']), axis=1)
 
     final_file['DATABASE']=final_file.apply(lambda row:f"{row['DATABASE'].split(',')[0]}", axis=1)
+    
+    
 
-    final_file.loc[~final_file['GENE'].str.contains('other genes'), 'ACCESSION'] = final_file.loc[~final_file['GENE'].str.contains('other genes'), 'ACCESSION'].str.split('-', expand=True)[1]
+    mask = ~final_file['GENE'].str.contains('other genes')
 
-    final_file.loc[~final_file['GENE'].str.contains('other genes'), 'COVERAGE(%)'] = final_file.loc[~final_file['GENE'].str.contains('other genes'), 'COVERAGE(%)'].str.split('-', expand=True)[1]
+    accession_values = final_file.loc[mask, 'COVERAGE(%)'].str.split('-', expand=True)
 
-    final_file.loc[~final_file['GENE'].str.contains('other genes'), 'IDENTITY(%)'] = final_file.loc[~final_file['GENE'].str.contains('other genes'), 'IDENTITY(%)'].str.split('-', expand=True)[1]
+
+    if len(accession_values.columns) > 1:
+        final_file.loc[mask, 'COVERAGE(%)'] = accession_values[1]
+
+
+    accession_values = final_file.loc[mask, 'ACCESSION'].str.split('-', expand=True)
+
+
+    if len(accession_values.columns) > 1:
+        final_file.loc[mask, 'ACCESSION'] = accession_values[1]
+
+
+
+    accession_values = final_file.loc[mask, 'IDENTITY(%)'].str.split('-', expand=True)
+
+
+    if len(accession_values.columns) > 1:
+        final_file.loc[mask, 'IDENTITY(%)'] = accession_values[1]
+
 
 
 
 final_file.to_csv(file_name,header=True, index=False,mode='w', sep='\t')
-
-
