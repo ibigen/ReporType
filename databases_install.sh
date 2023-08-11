@@ -44,13 +44,13 @@ abricate --setupdb
 
 ##Creating lp_serogroup_typing db
 mkdir "$path"/lp_serogroup_typing
-cp "$inicial_path"/cp databases/lp_serogroup_typing.fasta "$path"/lp_serogroup_typing/sequences
+cp "$inicial_path"/databases/lp_serogroup_typing.fasta "$path"/lp_serogroup_typing/sequences
 cd "$path"/lp_serogroup_typing ; makeblastdb -in sequences -title lp_serogroup_typing -dbtype nucl -hash_index
 abricate --setupdb   
 
 ##Creating lp_dot_icm db
 mkdir "$path"/lp_dot_icm
-cp "$inicial_path"/cp databases/lp_dot_icm.fasta "$path"/lp_dot_icm/sequences
+cp "$inicial_path"/databases/lp_dot_icm.fasta "$path"/lp_dot_icm/sequences
 cd "$path"/lp_dot_icm ; makeblastdb -in sequences -title lp_dot_icm -dbtype nucl -hash_index
 abricate --setupdb 
 
