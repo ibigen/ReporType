@@ -1,11 +1,13 @@
 # ReporType - RAW VERSION
 
 
-ReporType is an automatic pipeline, created with [Snakemake](https://snakemake.readthedocs.io/en/stable/index.html), for screening and typing loci in different variants of viruses and bacteria, thus allowing the detection of subspecies of these pathogenic agents. 
+ReporType is an automatic, easy-to-use and flexible pipeline, created with Snakemake, for loci screening and typing. It is application can particularly useful for rapid genotyping of infectious agents, namely virus and bacteria.
 
-This flexible and easy-to-use bioinformatics tool, that uses [ABRicate](https://github.com/tseemann/abricate) to analyse raw data from the sequencing technologies Sanger, Illumina and Nanopore, or fasta files with previously processed contigs, and automatically identifies the genotypes present in the samples under analysis, noting subspecies or strains of different viruses and bacteria. Other software are used to prepare the raw data to be analsed by ABRicate, those are represented in the illustrative scheme.
+ReporType was designed to accept multiple input formats (from Illumina or ONT reads to Sanger raw files or FASTA files), being suitable for application in a wide variety of pathogens. It relies on multiple software for technology-specific reads QC and de novo assembly, and thus apply ABRicate (https://github.com/tseemann/abricate) for locus screening, culminating in the generation of easy-to-interpret reports towards the identification of pathogen genotypes/subspecies or loci repertoire.
 
-ReporType comes with several databases already built-in, but allows you to create your own database, instructions below. You can also change several analysis parameters, as well as modify parameters of each software used.
+ 
+
+ReporType comes with pre-prepared databases for genotyping of a few virus/bacteria pathogens, but can be easily setup to handle custom databases, instructions below. You can also change several analysis parameters, as well as modify parameters of each software used.
 The final report consists of a document in table format containing the most relevant results for the analysis of the genotypes found, such as sample name, genes found, coverage and percentage of identity, the database used and access. You will also be able to access detailed ABRIcate output files and intermediate files that are produced by other software (clipped samples, fasta files, etc...).
 
 
@@ -163,3 +165,9 @@ When you are donne using ReporType you can deactivate the environment with:<br>
 To uninstall ReporType, you need to delete the conda environment with: <br>
 `$ conda env remove --name ReporType`<br>
 
+## Citation
+If you run ReporType, please cite this Github page:<br>
+
+Helena Cruz, Miguel Pinheiro, Vítor Borges (2023). ReporType - Flexible bioinformatics tool for targeted loci screening and typing. https://github.com/ibigen/loci_screening_typing
+
+ 

@@ -10,9 +10,9 @@
 database:
   "path/to/my_database.fasta"
   
-#In case you dont't have a fasta file already formatted for abricate (seq~~~gene~~~acession), you can give a fasta file only with the sequences and a table (tsv) with sequece, id and acession for each sequence. 
-#You should write the name of your new database in the "database" variable.
-#Note that you should not alter the following params if your already have a formatted fasta file.
+#If you don't have a fasta file already formatted for Abricate (seq~~~gene~~~acession), you can provide a fasta file containing only sequences and a table (tsv) with three columns, first one (sequence) for sequence name, second (id) for corresponding element, such as genotype, subspecies, type, and third (accession) for the accession of each sequence.
+#Specify the name of your new database in the "database" variable.
+#Note that you should not alter the following parameters if you already have a formatted fasta file.
 fasta_db:
   "path/to/sequences.fasta"
   
@@ -29,7 +29,7 @@ sample_directory:
 sample_name:
   "all"
   
-#Chose the name of your final csv output file (default="all_samples"), and a directory for your results (default="results").
+#Choose the name of your final csv output file (default="all_samples"), and a directory for your results (default="results").
 output_name:
   "all_samples"
 
@@ -39,7 +39,7 @@ output_directory:
 
 
 #Opcionally, especify the input format you are going to analyse (default="any"). If you leave it with the default, all samples of the given folder will be analysed.
-#Your opcions are: 'fasta', 'nanopore','illumina_single','illumina_paired','sanger','any'.
+#Your options are: 'fasta', 'nanopore','illumina_single','illumina_paired','sanger','any'.
 input_format:
   "any"
 
@@ -53,12 +53,12 @@ multi_fasta:
 threads:
   2
 
-#At last, you can choose if, in case there is more than one gene detected, you want to prioritize greater coverage or greater identity (defoult:"cov")
-#Your opcions are: 'cov', 'id'
+#At last, you can choose if, in case there is more than one gene detected, you want to prioritize greater coverage or greater identity (default:"cov")
+#Your options are: 'cov', 'id'
 prioritize:
   "cov" 
 
-#Abricate params
+#Abricate paramsv
 #Minimum DNA %identity (default=1).
 minid:
   1
@@ -116,7 +116,7 @@ encoding_paired:
 quality:
   8
 
-#Nanofilt length: minimun length per read (default=50)
+#Nanofilt length: minimum length per read (default=50)
 length:
   50
   
