@@ -1,14 +1,14 @@
 # ReporType - RAW VERSION
 
 
-ReporType is an automatic, easy-to-use and flexible pipeline, created with Snakemake, for loci screening and typing. It is application can particularly useful for rapid genotyping of infectious agents, namely virus and bacteria.
+ReporType is an automatic, easy-to-use and flexible pipeline, created with Snakemake, for loci screening and typing. Its application can particularly useful for rapid genotyping of infectious agents, namely virus and bacteria.
 
-ReporType was designed to accept multiple input formats (from Illumina or ONT reads to Sanger raw files or FASTA files), being suitable for application in a wide variety of pathogens. It relies on multiple software for technology-specific reads QC and de novo assembly, and thus apply ABRicate (https://github.com/tseemann/abricate) for locus screening, culminating in the generation of easy-to-interpret reports towards the identification of pathogen genotypes/subspecies or loci repertoire.
+ReporType was designed to accept multiple input formats (from Illumina or ONT reads to Sanger raw files or FASTA files), being suitable for application in a wide variety of pathogens. It relies on multiple software for technology-specific reads QC and de novo assembly, and thus apply ABRicate (https://github.com/tseemann/abricate) for locus screening, culminating in the generation of easy-to-interpret reports towards the identification of pathogen genotypes/subspecies or the screening of loci of interest.
 
  
 
 ReporType comes with pre-prepared databases for genotyping of a few virus/bacteria pathogens, but can be easily setup to handle custom databases, instructions below. You can also change several analysis parameters, as well as modify parameters of each software used.
-The final report consists of a document in table format containing the most relevant results for the analysis of the genotypes found, such as sample name, genes found, coverage and percentage of identity, the database used and access. You will also be able to access detailed ABRIcate output files and intermediate files that are produced by other software (clipped samples, fasta files, etc...).
+The final report consists of a document in table format containing the most relevant results, such as sample name, genes found, coverage and percentage of identity, the database used and access. You will also be able to access detailed ABRIcate output files and intermediate files that are produced by other software (clipped samples, fasta files, etc...).
 
 
 ![alt text](https://github.com/ibigen/loci_screening_typing/blob/main/ReporType_workflow.png)
