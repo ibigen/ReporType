@@ -1,17 +1,15 @@
 # ReporType - RAW VERSION
 
 
-ReporType is an automatic, easy-to-use and flexible pipeline, created with Snakemake, for loci screening and typing. Its application can particularly useful for rapid genotyping of infectious agents, namely virus and bacteria.
+ReporType is an automatic, easy-to-use and flexible pipeline, created with Snakemake, for loci screening and typing. Its application can be particularly useful for rapid genotyping of infectious agents, namely virus and bacteria.
 
 ReporType was designed to accept multiple input formats (from Illumina or ONT reads to Sanger raw files or FASTA files), being suitable for application in a wide variety of pathogens. It relies on multiple software for technology-specific reads QC and de novo assembly, and thus apply ABRicate (https://github.com/tseemann/abricate) for locus screening, culminating in the generation of easy-to-interpret reports towards the identification of pathogen genotypes/subspecies or the screening of loci of interest.
 
- 
-
-ReporType comes with pre-prepared databases for genotyping of a few virus/bacteria pathogens, but can be easily setup to handle custom databases, instructions below. You can also change several analysis parameters, as well as modify parameters of each software used.
-The final report consists of a document in table format containing the most relevant results, such as sample name, genes found, coverage and percentage of identity, the database used and access. You will also be able to access detailed ABRIcate output files and intermediate files that are produced by other software (clipped samples, fasta files, etc...).
+ReporType comes with pre-prepared databases for genotyping of a few virus/bacteria, but can be easily setup to handle custom databases, instructions below. You can also change several analysis parameters, as well as modify parameters of each software used.
+The final report consists of a document in table format containing the most relevant results, such as sample name, element found (such as genotype, subspecies, etc), coverage and percentage of identity, the database used and accession number. You will also be able to access detailed ABRIcate output files and intermediate files that are produced by other software (clipped samples, fasta files, etc...).
 
 
-![alt text](https://github.com/ibigen/loci_screening_typing/blob/main/ReporType_workflow.png)
+![alt text](https://github.com/ibigen/ReporType/blob/main/ReporType_workflow.png)
 
 
 
@@ -22,8 +20,8 @@ For installation, you need to:
 
 
 1. Download this git repository:<br>
-`$ git clone https://github.com/ibigen/loci_screening_typing/`<br>
-`$ cd loci_screening_typing`
+`$ git clone https://github.com/ibigen/ReporType/`<br>
+`$ cd ReporType`
 
 2. Install running:<br>
 `$ chmod +x install.sh`<br>
@@ -60,7 +58,7 @@ If is the first time using a new database you need to add the path to the format
 If you don't have a database file already formatated for abricate, you can provide two files to crate a new database:<br>
 Note that, in this case, you should write the name of your new database in the "database" variable.
 > **fasta_db**: fasta file with the sequences for your database (example: fasta_db=path/to/sequences.fasta).<br>
-> **table_db**:  table (tsv) with sequece, id and acession for each sequence (example table_db=path/to/table.tsv)<br>
+> **table_db**:  table (tsv) with three columns: column one (sequence), with the name of each sequence; column two (id), with the identification of each element (genotype, subspecies, etc); and column three (accession), with the acession number for each sequence (example table_db=path/to/table.tsv)<br>
 > **database**: name of the database you wish to create (example: database=my_database).<br>
 
 **Samples params:** <br>
@@ -76,6 +74,7 @@ ReporType optional configuration params includes: <br>
 > **input_format**: especify the input format you are going to analyse. If you leave it with the default, all samples of the given folder will be analysed. Your opcions are: fasta,nanopore,illumina_single,illumina_paired,sanger, or any. You must separete them with a coma (default: input_format=any)<br>
 > **multi_fasta**: if you are going to analyse any multi-fasta files, give the name of each multi-fasta file. You can chosse "all" if all of your fasta files are multi-fasta(default: multi_fasta=none).<br>
 > **threads**: threads you which to use (default: threads=2).<br>
+> **prioritize**: in case there is more than one gene detected, choose if you want to prioritize greater coverage (cov) or greater identity (id) (default:"cov").<br>
 
 You can also specify some software params.<br>
 
@@ -90,6 +89,7 @@ You can also specify some software params.<br>
 > **minlen_single** and **minlen_paired**: Trimmomatic Minlen, minimum read size (default: minlen=MINLEN:36).<br>
 > **leading_single** and **leading_paired**: Trimmomatic Leading, bases to remove at the beginning of the read (default: leading=LEADING:3)<br>
 > **trailing_single** and **trailing_paired**: Trimmomatic Trailing, bases to remove at the end of the read (default: trailing=TRAILING:3)<br>
+> **encoding_single** and **encoding_paired**:Trimmomatic encoding: if quality encoding is not specified in fastq file, specify specify the quality encoding (default=in_file, Your options are: 'phred33', 'phred64')
 
 **Nanopore params:**<br>
 > **quality**: Nanofilt minimum quality mean for read (default: quality=8).<br>
@@ -109,8 +109,8 @@ The optional configuration params also include all the configuration params for 
 > **--cores**: number of CPU to be used, it is mandatory (example: --cores all).<br>
 > **-np**: dry-run to verify the jobs you are submiting. <br>
 > **--config**: you must use this command before configurate the ReporType params previosly refered (example: --config database=my_database).<br>
-> **--snakefile**: you can execute ReporType in any directory using this command to specify the directory for the snakefile of ReporType (example: --snakefile path/to/loci_screening_typing/snakefile).<br> 
-> **--configfile**: you can execute ReporType in any directory using this command to specify the directory for the config file of ReporType (example: --configfile path/to/loci_screening_typing/config.yaml).<br>
+> **--snakefile**: you can execute ReporType in any directory using this command to specify the directory for the snakefile of ReporType (example: --snakefile path/to/ReporType/snakefile).<br> 
+> **--configfile**: you can execute ReporType in any directory using this command to specify the directory for the config file of ReporType (example: --configfile path/to/ReporType/config.yaml).<br>
 
 
 ## Execution<br>
@@ -149,7 +149,7 @@ If you configurate the config.yaml file, you can only run:<br>
 `$ ReporType -np --config sample_directory=path/to/my_samples_folder/ database=my_database`<br>
 
 #### Example 8 - To run ReporType out of instalation directory:<br>
-`$ ReporType --cores all --snakefile path/to/loci_screening_typing/snakefile --configfile path/to/loci_screening_typing/config.yaml –-config sample_directory=path/to/my_samples_folder/ database=my_database`<br>
+`$ ReporType --cores all --snakefile path/to/ReporType/snakefile --configfile path/to/ReporType/config.yaml –-config sample_directory=path/to/my_samples_folder/ database=my_database`<br>
 
 
 <br>
@@ -168,6 +168,6 @@ To uninstall ReporType, you need to delete the conda environment with: <br>
 ## Citation
 If you run ReporType, please cite this Github page:<br>
 
-Helena Cruz, Miguel Pinheiro, Vítor Borges (2023). ReporType - Flexible bioinformatics tool for targeted loci screening and typing. https://github.com/ibigen/loci_screening_typing
+Helena Cruz, Miguel Pinheiro, Vítor Borges (2023). ReporType - Flexible bioinformatics tool for targeted loci screening and typing. https://github.com/ibigen/ReporType
 
  

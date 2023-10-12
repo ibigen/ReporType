@@ -103,7 +103,7 @@ trailing_single:
 trailing_paired:
   "TRAILING:3"
 
-#Trimmomatic encoding: if quality encoding is not specified in fastq file, specify where (default=in_file)
+#Trimmomatic encoding: if quality encoding is not specified in fastq file, specify the quality encoding (default=in_file)
 #Your options are 'phred33', 'phred64', 'in_file'
 encoding_single: 
   "in_file"
