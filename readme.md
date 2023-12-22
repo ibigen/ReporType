@@ -1,5 +1,8 @@
-# ReporType - RAW VERSION
+# ReporType
 
+This repository contains a preliminary version of ReporType.
+
+**PLEASE GO TO THE FINAL AND UP-TO-DATE REPOSITORY https://github.com/insapathogenomics/ReporType**
 
 ReporType is an automatic, easy-to-use and flexible pipeline, created with Snakemake, for loci screening and typing. Its application can be particularly useful for rapid genotyping of infectious agents, namely virus and bacteria.
 
