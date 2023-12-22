@@ -169,6 +169,7 @@ To uninstall ReporType, you need to delete the conda environment with: <br>
 ## Citation
 If you run ReporType, please cite this Github page:<br>
 
-Helena Cruz, Miguel Pinheiro, Vítor Borges (2023). ReporType - Flexible bioinformatics tool for targeted loci screening and typing. https://github.com/ibigen/ReporType
+Helena Cruz, Miguel Pinheiro, Vítor Borges (2023). ReporType - Flexible bioinformatics tool for targeted loci screening and typing.
+https://github.com/insapathogenomics/reportype
 
  
